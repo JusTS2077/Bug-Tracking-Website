@@ -1,0 +1,65 @@
+<div class="heading">
+  <h1>Status</h1>
+</div>
+<div class="options">
+  <button (click)="showForm='form1'">Add Status</button>
+  </div>
+  <div class="tablecontainer">
+  <table class="blueTable">
+    <thead>
+      <th>Status ID</th>
+      <th>Status Name</th>
+      <th>Status Remarks</th>
+      <th>Update</th>
+      <th>Delete</th>
+    </thead>
+    <tbody>
+    <tr *ngFor="let pr of status">
+      <td>{{pr.id}}</td>
+      <td>{{pr.name}}</td>
+      <td>{{pr.remarks}}</td>
+      <td><button (click)="displayUpdateForm(pr)"><img src="https://img.icons8.com/?size=100&id=71201&format=png&color=000000" width="16px" height="16px"></button></td>
+      <td><button (click)="returnId(pr)"><img src="https://img.icons8.com/?size=100&id=67884&format=png&color=000000"></button></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<div class="deleteBox"*ngIf="!!showDelete">
+  <header>Confirm</header>
+  <span>Are you sure you want to delete?<br>
+    <button (click)="deleteStatus(deleteid)">Yes</button>
+    <button (click)="showDelete=false">No</button>
+  </span>
+</div>
+<div *ngIf="showForm==='form1'" class="forms">
+  <header>Add Status</header>
+  <span>  
+    <label for="tagname">Status Name: </label>
+    <input type="text" id="tagname" [(ngModel)]="status_nm">
+    <small class="errormsg" *ngIf="!validate && status_nm===''">*Required</small>
+
+  </span><br>
+  <span>
+  <textarea id="remarks" placeholder="Write remarks here" [(ngModel)]="status_remarks"></textarea><br>
+  <small class="errormsg" *ngIf="!validate && status_remarks===''">*Required</small>
+  </span>
+  <span class="formbuttons">
+    <button  (click)="showForm='';validate=true">Close</button>
+    <button (click)="addStatus()">Submit</button>
+  </span>
+</div>
+
+<div *ngIf="showForm==='form2'" class="forms">
+  <header>Update Status</header>  
+  <span>
+    <label for="tagname">Status Name: </label>
+    <input type="text" id="tagname" [(ngModel)]="selectedUser.name">
+  </span><br>
+  <textarea id="remarks" placeholder="Write remarks here" [(ngModel)]="selectedUser.remarks"></textarea><br>
+  <span class="formbuttons">
+    <button  (click)="showForm=''">Close</button>
+    <button (click)="updateStatus()">Update</button>
+  </span>
+</div>
+
+

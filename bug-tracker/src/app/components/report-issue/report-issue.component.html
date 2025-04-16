@@ -1,0 +1,62 @@
+<div class="reportdiv">
+    <h3 class="title">Enter Issue Details</h3><br>
+    <div class="reportform">
+        <span>
+            <label>Project: </label>
+            <select [(ngModel)]="selectedProject">
+                <option>Select a project</option>
+                <option *ngFor="let proj of projects">{{proj.name}}</option>
+            </select>
+        </span>
+
+        <span>
+            <label>Tag: </label>
+            <select [(ngModel)]="selectedTag">
+                <option>Select a tag</option>
+                <option *ngFor="let tag of tags">{{tag.name}}</option>
+            </select>
+        </span>
+
+        <span>
+            <label>Status: </label>
+            <select [(ngModel)]="selectedStatus">
+                <option>Select status</option>
+                <option *ngFor="let stat of status">{{stat.name}}</option>
+            </select>
+        </span>
+
+        <span>
+            <label>Priority: </label>
+            <select [(ngModel)]="selectedPriority">
+                <option>Select priority</option>
+                <option *ngFor="let pr of priority">{{pr.name}}</option>
+            </select>
+        </span>
+   
+        <span>
+            <label>Assigned To: </label>
+            <select [(ngModel)]="selectedUser">
+                <option>Select User</option>
+                <option *ngFor="let user of users">{{user.usernm}}</option>
+            </select>
+        </span><br>
+        <span>
+            <label>Title: </label><br>
+            <textarea [(ngModel)]="title"></textarea>
+        </span>
+        <span>
+            <label>Description: </label><br>
+            <textarea [(ngModel)]="description"></textarea>
+        </span>
+        <span class="file">
+            <label>Upload File: </label>
+            <input type="file" (change)="onFileSelected($event)" #fileInput>
+            <button class="clear" (click)="clearFile(fileInput)"><img src="https://img.icons8.com/?size=100&id=99950&format=png&color=000000"></button>
+        </span>
+        <br>
+        
+        <button class="submit" (click)="addIssue()">Submit issue</button>
+    </div>
+    <pre>{{ selectedProject }} {{ selectedTag }} {{ selectedStatus }} {{ selectedPriority }} {{ selectedUser }}</pre>
+
+</div>

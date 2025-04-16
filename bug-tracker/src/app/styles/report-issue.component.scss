@@ -1,0 +1,64 @@
+@use 'variables' as v;
+
+.reportform{
+    height:420px;
+    padding:10px;
+    width:85%;
+    background-color:  rgb(255, 255, 255);
+    display:grid;
+    grid-template-columns: auto auto;
+}
+
+.reportform span:not(.file){
+    display:grid;
+    grid-template-columns:0.3fr 1fr;
+    grid-template-rows:auto auto;
+}
+
+.reportform textarea{
+    height:50px;
+    width:200px;
+    border-radius:5px;
+}
+
+.reportform select{
+    width:150px;
+}
+
+.clear{
+    background-color: #00466b00;
+    padding:5px;
+    width:50px;
+    height:50px;
+    border:0;
+    border-radius:20px;
+    margin-left:-4vw;
+    box-shadow: 0px 5px 20px 0px  rgb(0, 0, 0,0.1);
+    transition: all 0.3s ease-in-out;
+}
+.clear:hover{
+    background-color: #ffffff;
+}
+
+.submit{
+    position: absolute;
+    width:20%;
+    height:50px;
+    border:0;
+    margin-top:23vw;
+    margin-left:55vw;
+    border-radius:8px;
+    color:v.$fontclr_light;
+    background-color: v.$secondary;
+}
+
+.title{
+    color:v.$fontclr_light;
+    font-size: 28px;
+    width:85%;
+    margin-top:-20px;
+    padding:10px;
+    background-color: v.$secondary;
+    border-radius:8px;
+    box-shadow: 0px 5px 5px 0px  rgb(0, 0, 0,0.2);
+}

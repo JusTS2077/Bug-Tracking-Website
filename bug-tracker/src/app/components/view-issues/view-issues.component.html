@@ -1,0 +1,86 @@
+<div *ngIf="isLoading" class="loading-bar">
+    <mat-progress-bar mode="indeterminate" color="accent"></mat-progress-bar>
+  </div>
+
+<div class="reportdiv" *ngIf="!isLoading">
+    <span class="projectspan">
+        <mat-label>Projects: </mat-label>
+        <mat-form-field class="no-underline">
+            <mat-select [(value)]="project_filter" (selectionChange)="filterby()">
+              <mat-option [value]="'All'">All</mat-option>
+              <mat-option *ngFor="let project of project_list" [value]="project">
+                {{ project }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+      </span>
+    <h3 class="title">Reported Issues</h3><br>
+    
+    <div class="filters">
+        <span>Filter by:</span>
+        <span>
+            <label>Tag: </label>
+            <select [(ngModel)]="tag_filter" (change)="filterby()">
+                <option [value]="'All'">All</option>
+                <option *ngFor="let issue of issues" [value]="issue.tag">{{issue.tag}}</option>
+            </select>
+        </span>
+
+        <span>
+            <label>Status: </label>
+            <select [(ngModel)]="status_filter" (change)="filterby()">
+                <option [value]="'All'">All</option>
+                <option *ngFor="let issue of issues" [value]="issue.status">{{issue.status}}</option>
+            </select>
+        </span>
+
+        <span>
+            <label>Priority: </label>
+            <select [(ngModel)]="priority_filter" (change)="filterby()">
+                <option [value]="'All'">All</option>
+                <option *ngFor="let issue of issues" [value]="issue.priority">{{issue.priority}}</option>
+            </select>
+        </span>
+        <span>
+            <label>Assigned To:</label>
+            <select [(ngModel)]="assignedto_filter" (change)="filterby()">
+                <option [value]="'All'">All</option>
+                <option *ngFor="let issue of issues" [value]="issue.assigned_to">{{issue.assigned_to}}</option>
+            </select>
+        </span>
+
+    </div>
+
+    <div class="tablecontainer">
+    <table class="blueTable">
+        <thead>
+            <tr>
+                <th>Issue_no</th>
+                <th>Project</th>
+                <th>Tag</th>
+                <th>Status</th>
+                <th>Priority</th>
+                <th>Assigned To</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>File</th>
+                <th>Issue Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let issue of issues">
+                <td>{{issue.issue_no}}</td>
+                <td>{{issue.project}}</td>
+                <td>{{issue.tag}}</td>
+                <td>{{issue.status}}</td>
+                <td>{{issue.priority}}</td>
+                <td>{{issue.assigned_to}}</td>
+                <td>{{issue.title}}</td>
+                <td>{{issue.description}}</td>
+                <td>{{issue.file_name}}</td>
+                <td>{{issue.issue_status}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+</div>

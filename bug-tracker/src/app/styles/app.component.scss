@@ -1,0 +1,57 @@
+@use "variables" as v;
+
+.sidebar{
+    display:flex;
+    flex-direction: column;
+    height:76vh;
+    width:25vh;
+    background-color:v.$primary;
+    margin-top:-2.5vw;
+    margin-right:100px;
+    margin-left:20px;
+    grid-row:2/4;
+    border-radius:20px 0px 20px 0px;
+    box-shadow: 0px 5px 1px 2px rgba(0,0,0,0.15);
+    padding:20px;
+}
+.sidebar button:not(.icon){
+    display:flex;
+    font-size:small;
+    width:25vh;
+    min-height:10px;
+    border:0;
+    margin:0;
+    background-color:v.$primary;
+    color:v.$fontclr_light;
+    margin-bottom:5vh;    
+    padding:10%;
+    border-radius: 8px;
+    box-shadow:  0px 0px 6px 2px  #00000026,
+    0px 0px 5px 2px rgba(0,0,0,0.15);
+    span{
+        margin-left:10px;
+        margin-top:10px;
+    }
+}
+
+.sidebar button:hover:not(.activeComp){
+    background-color:v.$hover;
+    img{
+        filter:invert(100%);
+    }
+    span{
+        color:v.$fontclr_dark;
+    }
+
+}
+
+.sidebar button.activeComp{
+    background-color:rgb(255, 255, 255);
+    background-color:v.$hover;
+    img{
+        filter:invert(100%);
+    }
+    span{
+        color:v.$fontclr_dark;
+    }
+}
