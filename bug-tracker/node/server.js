@@ -22,6 +22,8 @@ const jwt = require('jsonwebtoken');
 function loginToken(user){
     const payload = {
         user:user.usernm,
+        firstnm:user.firstname,
+        lastnm:user.lastname,
         email:user.email,
         role:user.role
     };
@@ -227,23 +229,11 @@ app.get('/priorities',async(req,res)=>{
 })
 
 
-app.get('/issues',async(req,res)=>{
-    try{
-        const issues = await pool.query("SELECT * FROM issues");
-        res.json(issues.rows);
-    }
-    catch(err){
-        console.error("Error getting data from table: ",err);
-        return res.status(500).json({message:"Error while trying to get issue data from Database"});
-    }
-})
-
-
 app.get("/issue-filter", async (req, res) => {
     try {
       const { project, tag, status, priority, assigned_to } = req.query;
   
-      let query = `SELECT * FROM issues WHERE 1=1`;
+      let query = `SELECT * FROM issues WHERE assigned_to='${assigned_to}' AND 1=1`;
       const values = [];
       let idx = 1;
   
@@ -262,10 +252,6 @@ app.get("/issue-filter", async (req, res) => {
       if (priority) {
         query += ` AND priority = $${idx++}`;
         values.push(priority);
-      }
-      if (assigned_to) {
-        query += ` AND assigned_to = $${idx++}`;
-        values.push(assigned_to);
       }
   
       const result = await pool.query(query, values);

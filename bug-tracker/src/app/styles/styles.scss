@@ -57,20 +57,6 @@ h2{
 }
 
 
-.mainhead{
-    background-color: #ffffff;
-    color:v.$fontclr_light;
-    box-shadow: 0px 3px 5px rgb(0, 0, 0,0.2);
-    position:relative;
-    display:flex;    
-    height:80px;
-    width:97%;
-    margin-left:10px;
-    margin-right:10px;
-    border-bottom-left-radius:30px;
-    border-bottom-right-radius: 30px;
-
-}
 
 .icon{
     height:80px;
@@ -134,7 +120,7 @@ header span{
     width:800px;
     color:v.$fontclr_dark;
     border-radius:10px;
-    box-shadow:0px 0px 6px 1000px rgba(0,0,0,0.2);
+    box-shadow:0px 0px 6px 1000px rgba(0,0,0,0.3);
     z-index: 999;
 }
 
@@ -344,10 +330,16 @@ h1{
   }
 
 .no-underline{
+    border:1px solid rgb(183, 183, 183);
+
+    width:200px;
+    border-radius: 10px;
+
     .mat-mdc-form-field-infix{
-        border:1px solid rgb(183, 183, 183);
         padding:10px;
         border-radius: 10px;
+        width:100%;
+
     }
     .mat-mdc-form-field-subscript-wrapper{
         display:none;

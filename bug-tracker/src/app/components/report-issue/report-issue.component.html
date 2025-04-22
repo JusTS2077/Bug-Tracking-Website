@@ -5,7 +5,7 @@
             <label>Project: </label>
             <select [(ngModel)]="selectedProject">
                 <option>Select a project</option>
-                <option *ngFor="let proj of projects">{{proj.name}}</option>
+                <option *ngFor="let proj of projects">{{proj}}</option>
             </select>
         </span>
 
@@ -32,14 +32,7 @@
                 <option *ngFor="let pr of priority">{{pr.name}}</option>
             </select>
         </span>
-   
-        <span>
-            <label>Assigned To: </label>
-            <select [(ngModel)]="selectedUser">
-                <option>Select User</option>
-                <option *ngFor="let user of users">{{user.usernm}}</option>
-            </select>
-        </span><br>
+
         <span>
             <label>Title: </label><br>
             <textarea [(ngModel)]="title"></textarea>

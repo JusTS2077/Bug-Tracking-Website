@@ -55,3 +55,99 @@
         color:v.$fontclr_dark;
     }
 }
+
+.mainhead{
+    background-color: #ffffff;
+    color:v.$fontclr_light;
+    box-shadow: 0px 3px 5px rgb(0, 0, 0,0.2);
+    position:relative;
+    display:flex;    
+    height:80px;
+    width:97%;
+    margin-left:10px;
+    margin-right:10px;
+    border-bottom-left-radius:30px;
+    border-bottom-right-radius: 30px;
+
+}
+
+.user_profile {
+    width: 50px;
+    height: 50px;
+    border-radius: 50px;
+    z-index: 20;
+    padding: 5px;
+    background-color: v.$accent;
+    margin-top: 10px;
+    margin-left: 90vw;
+    transition: all 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+
+    span {
+        position: sticky;
+        display:flex;
+        span{
+            opacity: 0;
+            transition: opacity 0.15s ease-in 0.15s;
+            position: sticky;
+            display: block;
+        }
+        button {
+            background-color: #00000000;
+            padding: 0;
+            height: 50px;
+            width: 50px;
+            border: 0;
+            border-radius: 50px;
+        
+            img {
+              transition: all 0.3s ease-in-out;
+              width: 50px;
+              height: 50px;
+            }
+          }
+          
+    }
+}
+.userclicked{
+    width: 300px;
+    height: 200px;
+    margin-left: 78vw;
+    border-radius: 20px 0px 20px 0px;
+    position: sticky;
+    padding:10px;
+
+    span {
+        padding:5px;
+        background-color: v.$primary;
+        margin-bottom:150px;
+        border-radius: 0px 0px 0px 0px;
+        span{
+          opacity: 1;
+          margin:10px;
+          margin-left:45px;
+          margin-top:14px;
+        }
+
+        button {  
+
+          img {
+
+            padding:5px;
+            filter: invert(100%);
+          }
+        }
+    }
+      
+      .logout{
+        position: absolute;
+        border-radius: 0px 0px 20px 0px ;
+        border:0;
+        height:100px;
+        width: 19vw;
+        margin:100px 0px 0px 0px;
+        
+      }
+}

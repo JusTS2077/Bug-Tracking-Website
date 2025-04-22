@@ -29,4 +29,9 @@ export class LoginComponent {
       }
     });
   }
+
+  logout(){
+    this.authservice.logout();
+    this.router.navigate(['/login']);
+  }
 }

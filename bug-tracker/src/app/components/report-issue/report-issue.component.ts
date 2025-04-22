@@ -2,6 +2,8 @@ import { Component,OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ReportIssueService } from './report-issue.service';
+import { jwtDecode } from 'jwt-decode';
+import { AuthService } from '../auth/auth.service';
 @Component({
   selector: 'app-report-issue',
   imports: [CommonModule,FormsModule],
@@ -11,10 +13,10 @@ import { ReportIssueService } from './report-issue.service';
 })
 export class ReportIssueComponent implements OnInit{
 
-  users:{user_id:number;usernm:string;password:string;email:string;firstname:string;lastname:string;department:string}[] = [];
+  users:{user_id:number;usernm:string;password:string;email:string;firstname:string;lastname:string;projects:string[];department:string}[] = [];
   tags:{id:number;name:string;remarks:string}[] = [];
   status:{id:number;name:string;remarks:string}[] = [];
-  projects:{id:number;name:string;remarks:string}[] = [];
+  projects:string[] = [];
   priority:{id:number;name:string;remarks:string}[] = [];
 
   selectedUser!:string;
@@ -26,6 +28,10 @@ export class ReportIssueComponent implements OnInit{
   title!:string;
   description!:string;
 
+  token!:any;
+  decodedToken!:any;
+
+
   onFileSelected(event:any){
     this.selectedFile = event.target.files[0];
   }
@@ -34,12 +40,20 @@ export class ReportIssueComponent implements OnInit{
     fileInput.value = '';
   }
 
-  constructor(private reportservice:ReportIssueService){}
+  constructor(private reportservice:ReportIssueService,private authservice:AuthService){}
   
   ngOnInit(): void {
     //getUsers
+    this.token = this.authservice.getToken();
+    this.decodedToken = jwtDecode(this.token);
+    this.selectedUser = this.decodedToken.user;
+
     this.reportservice.getUsers().subscribe(data=>{
       this.users = data;
+      console.log(this.users);
+      this.projects.push(data[0].projects);
+      this.projects = this.projects.flat();
+      console.log(this.projects);
     })
     //getTags
     this.reportservice.getTags().subscribe(data=>{
@@ -48,10 +62,6 @@ export class ReportIssueComponent implements OnInit{
     //getstatus
     this.reportservice.getStatus().subscribe(data=>{
       this.status = data;
-    })
-    //getProjects
-    this.reportservice.getProjects().subscribe(data=>{
-      this.projects = data;
     })
     //getPriority
     this.reportservice.getPriorities().subscribe(data=>{

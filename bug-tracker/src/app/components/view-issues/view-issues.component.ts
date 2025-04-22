@@ -17,14 +17,15 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
   templateUrl: './view-issues.component.html',
   styleUrl: '../../../app/styles/view-issues.component.scss'
 })
+
 export class ViewIssuesComponent implements OnInit{
 
   issues:{issue_no:number,project:string,tag:string,status:string,priority:string,assigned_to:string,title:string,description:string,file_name:string,file_type:string,file_content:string,issue_status:string}[] = [];
-  project_filter="";
-  tag_filter="";
-  status_filter="";
-  priority_filter="";
-  assignedto_filter=""; 
+  project_filter="All";
+  tag_filter="All";
+  status_filter="All";
+  priority_filter="All";
+  assignedto_filter="All"; 
 
   isLoading=false;
   
@@ -46,68 +47,55 @@ export class ViewIssuesComponent implements OnInit{
   project_list:string[] = [];
 
   ngOnInit(): void {
-    this.viewservice.getIssues().subscribe((data)=>{
-      this.issues = data;
-    })
 
-    console.log("Projects:",this.project_list);
     this.token = this.authservice.getToken();
     this.decodedToken = jwtDecode(this.token);
+    this.assignedto_filter = this.decodedToken.user;
+    console.log("User: ",this.assignedto_filter);
+
     console.log("Token det",this.decodedToken);
+
+    this.filterby();
+}
+
+filterby(){
+  var filter = {project:this.cleanFilter(this.project_filter),
+  tag:this.cleanFilter(this.tag_filter),
+  status:this.cleanFilter(this.status_filter),
+  priority:this.cleanFilter(this.priority_filter),
+  assigned_to:this.cleanFilter(this.assignedto_filter)
+};
+
+let filtering = false;
+
+if(this.project_filter || this.tag_filter || this.status_filter || this.priority_filter){
+  filtering = true;
+}
+else{
+  filtering = false;
+}
+
+if(filtering){
+  this.router.navigate([],{
+    relativeTo:this.activated_route,
+    queryParams:filter,
+    queryParamsHandling:"merge",
+  })
+  this.viewservice.getIssues(filter).subscribe((data)=>{
+    this.project_list = [];
+    this.project_list.push(...data.map((ele:any)=>ele.project));
+    console.log(data);
+    this.issues=data;
+  });
+}
   
-    this.apiservice.getUsers().subscribe((data) => {
-      data.forEach((element:any) => {
-        console.log(element.usernm,this.decodedToken.user)
-        if(element.projects && element.usernm===this.decodedToken.user){
-          console.log("user",element);
-          console.log("Projects",element.projects);
-          element.projects.forEach((ele:any) => {
-            this.project_list.push(ele)
-          });
-        }
-      });
-    });
-    console.log(this.project_list);
-  }
-
-
-
-  filterby(){
-    const filter = {project:this.cleanFilter(this.project_filter),
-      tag:this.cleanFilter(this.tag_filter),
-      status:this.cleanFilter(this.status_filter),
-      priority:this.cleanFilter(this.priority_filter),
-      assigned_to:this.cleanFilter(this.assignedto_filter)
-    };
-
-    let filtering = false;
-
-    if(this.project_filter || this.tag_filter || this.status_filter || this.priority_filter || this.assignedto_filter){
-      filtering = true;
-    }
-    else{
-      filtering = false;
-    }
-
-    if(filtering){
-      this.router.navigate([],{
-        relativeTo:this.activated_route,
-        queryParams:filter,
-        queryParamsHandling:"merge",
-      })
-      this.viewservice.filterIssues(filter).subscribe((data)=>{
-        console.log(data);
-        this.issues=data;
-      });
-    }
-      
-    else{
-      this.router.navigate([],{
-        relativeTo:this.activated_route,
-        queryParams:{},
-        queryParamsHandling:'merge'
-      })
-    }
+else{
+  this.router.navigate([],{
+    relativeTo:this.activated_route,
+    queryParams:{},
+    queryParamsHandling:'merge'
+  })
+}
 
   }
 }

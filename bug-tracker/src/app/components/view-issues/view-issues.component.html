@@ -41,13 +41,6 @@
                 <option *ngFor="let issue of issues" [value]="issue.priority">{{issue.priority}}</option>
             </select>
         </span>
-        <span>
-            <label>Assigned To:</label>
-            <select [(ngModel)]="assignedto_filter" (change)="filterby()">
-                <option [value]="'All'">All</option>
-                <option *ngFor="let issue of issues" [value]="issue.assigned_to">{{issue.assigned_to}}</option>
-            </select>
-        </span>
 
     </div>
 
@@ -60,7 +53,6 @@
                 <th>Tag</th>
                 <th>Status</th>
                 <th>Priority</th>
-                <th>Assigned To</th>
                 <th>Title</th>
                 <th>Description</th>
                 <th>File</th>
@@ -74,7 +66,6 @@
                 <td>{{issue.tag}}</td>
                 <td>{{issue.status}}</td>
                 <td>{{issue.priority}}</td>
-                <td>{{issue.assigned_to}}</td>
                 <td>{{issue.title}}</td>
                 <td>{{issue.description}}</td>
                 <td>{{issue.file_name}}</td>
