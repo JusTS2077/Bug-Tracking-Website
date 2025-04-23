@@ -45,7 +45,7 @@ function authenticateToken(req,res,next){
     }
 
     jwt.verify(token,process.env.JWT_SECRET || "yoursecretkey",(err,user)=>{
-        if(err) return res.status(403);
+        if (err) return res.status(403).json({ message: "Invalid token" });
         req.user = user;
         next();
     });
@@ -69,6 +69,10 @@ app.post("/login",async(req,res)=>{
         const result = query.rows;
 
         const isMatch = await bcrypt.compare(password,result[0].password);
+        
+        if (!isMatch) {
+            return res.status(401).json({ message: "Invalid username or password" });
+        }
 
         const token = loginToken(result[0]);
 

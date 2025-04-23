@@ -1,12 +1,11 @@
 <header class="mainhead" *ngIf="!isLoginPage">
   <button class="icon"><img src="https://img.icons8.com/?size=100&id=IZ8RAVASUArF&format=png&color=000000" alt="Icon"></button>
-  <div class="user_profile" [class.userclicked]="userclick"  (click)="profileToggle()">
+  <div class="user_profile" [class.profileclicked]="userclick"  (click)="profileToggle()">
     <span>
       <button><img src="https://img.icons8.com/?size=100&id=84898&format=png&color=000000"></button>
       <span *ngIf="userclick">{{decodedToken.firstnm+" "+decodedToken.lastnm}}</span>
   </span>
-  <button class="logout" *ngIf="userclick">LOG OUT</button>
-
+  <button class="logout" *ngIf="userclick" (click)="logout()"><img src="https://img.icons8.com/?size=100&id=2445&format=png&color=000000"><span>LOG OUT</span></button>
   </div>
 </header>
 <div class="navdiv">

@@ -26,11 +26,23 @@ export class AppComponent implements OnInit{
         this.isLoginPage = this.router.url === "/login";
       }
     });
-    this.token = this.auth.getToken();
-    this.decodedToken = jwtDecode(this.token);
+
   }
   ngOnInit(): void {
-    
+    this.token = this.auth.getToken();
+    if(this.token){
+      try{
+        this.decodedToken = jwtDecode(this.token);
+      }
+      catch(err){
+        console.error("Failed to decode token:", err);
+        this.auth.logout();
+        this.router.navigate(['/login']);
+      }
+    }
+    else{
+      this.router.navigate(['/login'])
+    }
   }
 
   profileToggle(){
@@ -40,6 +52,12 @@ export class AppComponent implements OnInit{
     else if(this.userclick === false){
       this.userclick = true;
     }
+  }
+
+  logout(){
+    this.auth.logout();
+    this.router.navigate(['/login']);
+    window.location.reload();
   }
 
 }
