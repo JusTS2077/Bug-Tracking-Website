@@ -26,6 +26,8 @@ export class ViewIssuesComponent implements OnInit{
   status_filter="All";
   priority_filter="All";
   assignedto_filter="All"; 
+  showForm=false;
+  selectedIssue!:any;
 
   isLoading=false;
   
@@ -58,44 +60,49 @@ export class ViewIssuesComponent implements OnInit{
     this.filterby();
 }
 
-filterby(){
-  var filter = {project:this.cleanFilter(this.project_filter),
-  tag:this.cleanFilter(this.tag_filter),
-  status:this.cleanFilter(this.status_filter),
-  priority:this.cleanFilter(this.priority_filter),
-  assigned_to:this.cleanFilter(this.assignedto_filter)
-};
+  filterby(){
+    var filter = {project:this.cleanFilter(this.project_filter),
+    tag:this.cleanFilter(this.tag_filter),
+    status:this.cleanFilter(this.status_filter),
+    priority:this.cleanFilter(this.priority_filter),
+    assigned_to:this.cleanFilter(this.assignedto_filter)
+  };
 
-let filtering = false;
+  let filtering = false;
 
-if(this.project_filter || this.tag_filter || this.status_filter || this.priority_filter){
-  filtering = true;
-}
-else{
-  filtering = false;
-}
+  if(this.project_filter || this.tag_filter || this.status_filter || this.priority_filter){
+    filtering = true;
+  }
+  else{
+    filtering = false;
+  }
 
-if(filtering){
-  this.router.navigate([],{
-    relativeTo:this.activated_route,
-    queryParams:filter,
-    queryParamsHandling:"merge",
-  })
-  this.viewservice.getIssues(filter).subscribe((data)=>{
-    this.project_list = [];
-    this.project_list.push(...data.map((ele:any)=>ele.project));
-    console.log(data);
-    this.issues=data;
-  });
-}
-  
-else{
-  this.router.navigate([],{
-    relativeTo:this.activated_route,
-    queryParams:{},
-    queryParamsHandling:'merge'
-  })
-}
+  if(filtering){
+    this.router.navigate([],{
+      relativeTo:this.activated_route,
+      queryParams:filter,
+      queryParamsHandling:"merge",
+    })
+    this.viewservice.getIssues(filter).subscribe((data)=>{
+      this.project_list = [];
+      this.project_list.push(...data.map((ele:any)=>ele.project));
+      console.log(data);
+      this.issues=data;
+    });
+  }
+    
+  else{
+    this.router.navigate([],{
+      relativeTo:this.activated_route,
+      queryParams:{},
+      queryParamsHandling:'merge'
+    })
+  }
 
+  }
+
+  downloadFile(issueId: number): void {
+    const url = `http://localhost:5000/download-file/${issueId}`;
+    window.open(url, '_blank');
   }
 }

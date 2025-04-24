@@ -132,7 +132,7 @@ app.post('/add-status',async (req,res)=>{
 });
 
 
-//*add project
+//add project
 app.post('/add-project',async (req,res)=>{
     try{
         const {projectname,projectremarks} = req.body;
@@ -266,6 +266,29 @@ app.get("/issue-filter", async (req, res) => {
       res.status(500).send("Internal Server Error");
     }
   });
+
+app.get('/download-file/:id',async(req,res)=>{
+    try{
+        const {id} = req.params;
+        const query = "select file_name,file_type,file_content from issues where issue_no=$1";
+        const result = await pool.query(query,[id]);
+
+        
+    if (result.rows.length === 0) {
+        return res.status(404).send("File not found");
+    }
+  
+      const file = result.rows[0];
+  
+      res.setHeader("Content-Disposition", `attachment; filename="${file.file_name}"`);
+      res.setHeader("Content-Type", file.file_type);
+      res.send(file.file_content);
+    } 
+    catch (err) {
+      console.error("Download error:", err);
+      res.status(500).send("Download failed");
+    }
+})
   
 
 /*This section of code contains the API endpoints for the user to delete entries from database*/

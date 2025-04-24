@@ -116,7 +116,6 @@
 
 .user_profile.profileclicked{
     position: relative;
-    margin-top:0px;
     margin-left:80vw;
     height:8vh;
     width:300px;
@@ -153,7 +152,7 @@
         }
 
         &:hover{
-            background:linear-gradient()
+            background-color:rgb(237, 237, 237)
         }
     }
 }

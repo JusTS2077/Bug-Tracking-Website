@@ -57,6 +57,7 @@
                 <th>Description</th>
                 <th>File</th>
                 <th>Issue Status</th>
+                <th>Expand</th>
             </tr>
         </thead>
         <tbody>
@@ -70,8 +71,45 @@
                 <td>{{issue.description}}</td>
                 <td>{{issue.file_name}}</td>
                 <td>{{issue.issue_status}}</td>
+                <td><button (click)="showForm=true;selectedIssue=issue"><img src="https://img.icons8.com/?size=100&id=1755&format=png&color=000000"></button></td>
             </tr>
         </tbody>
     </table>
 </div>
 </div>
+
+<div *ngIf="showForm" class="forms">
+    <header>Issue details</header>
+    <span>
+      <label for="tagname">Project Name: </label>
+      <label>{{selectedIssue.project}}</label>
+    </span>
+    <span>
+        <label>Tag: </label>
+        <label>{{selectedIssue.tag}}</label>
+    </span>
+    <span>
+        <label>Status:</label>
+        <label>{{selectedIssue.status}}</label>
+    </span>
+    <span>
+        <label>Priority:</label>
+        <label>{{selectedIssue.priority}}</label>
+    </span>
+    <span>
+        <label>Title:</label>
+        <label>{{selectedIssue.title}}</label>
+    </span>
+    <span>
+        <label>Description:</label>
+        <label>{{selectedIssue.description}}</label>
+    </span>
+    <span class="filespan">
+        <label>File</label>
+        <label>{{selectedIssue.file_name}}</label>
+        <button (click)="downloadFile(selectedIssue.issue_no)">Download</button>
+    </span>
+    <span class="formbuttons">
+      <button  (click)="showForm=false">Close</button>
+    </span>
+  </div>
