@@ -12,6 +12,13 @@
        (click)="activeTab = 'users'">
       User
     </a>
+
+    <a mat-tab-link class="tab"
+      [routerLink]="'/manage/status'"
+      [active]="activeTab === 'status'"
+      (click)="activeTab = 'status'">
+      User Groups
+    </a>
   
     <a mat-tab-link class="tab"
        [routerLink]="'/manage/tag'"
