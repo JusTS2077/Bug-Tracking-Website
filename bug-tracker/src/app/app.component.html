@@ -14,7 +14,6 @@
     <button [routerLink]="'/manage'" [ngClass]="{'activeComp':router.url.startsWith('/manage')}" [class.activeComp]="activeComp==='manage'" (click)="activeComp='manage'"><img src="manage.png"><span>Manage</span></button>
       <button [routerLink]="'/view-issues'" [ngClass]="{'activeComp':router.url.startsWith('/view-issues')}" [class.activeComp]="activeComp==='view-issues'" (click)="activeComp='view-issues'"><img src="view_issues.png" alt="1"><span>View issues</span></button>
       <button [routerLink]="'/report-issue'" [ngClass]="{'activeComp':router.url === '/report-issue'}" [class.activeComp]="activeComp==='report-issues'" (click)="activeComp='report-issues'"><img src="report_issue.png" alt="2"><span>Report issue</span></button>
-      <button  [class.activeComp]="activeComp==='summary'" (click)="activeComp='summary'"><img src="summary.png" alt="3"><span>Summary</span></button>
   </nav>
 </ng-container>
   <div class="router">

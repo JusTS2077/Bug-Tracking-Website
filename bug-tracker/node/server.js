@@ -280,7 +280,7 @@ app.get('/download-file/:id',async(req,res)=>{
   
       const file = result.rows[0];
   
-      res.setHeader("Content-Disposition", `attachment; filename="${file.file_name}"`);
+      res.setHeader("Content-Disposition", `inline`);
       res.setHeader("Content-Type", file.file_type);
       res.send(file.file_content);
     } 
@@ -434,7 +434,7 @@ app.put("/issues/:issue_no",async(req,res)=>{
         const issue_no = req.params.issue_no;
         const file = req.file;
         const {project,tag,status,priority,assigned_to,title,description}=req.body;
-        const update = await pool.query("update table issuese set project=$1,tag=$2,status=$3,priority=$4,assigned_to=$5,title=$6,description=$7,file_name=$8,file_type=$9,file_content=$10 where issue_no=$11",[project,tag,status,priority,assigned_to,title,description,file.originalname,file.mimetype,file.buffer]);
+        const update = await pool.query("update table issues set project=$1,tag=$2,status=$3,priority=$4,assigned_to=$5,title=$6,description=$7,file_name=$8,file_type=$9,file_content=$10 where issue_no=$11",[project,tag,status,priority,assigned_to,title,description,file.originalname,file.mimetype,file.buffer]);
         res.json(update.rows);
 
     }

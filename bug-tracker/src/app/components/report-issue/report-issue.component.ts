@@ -51,7 +51,12 @@ export class ReportIssueComponent implements OnInit{
     this.reportservice.getUsers().subscribe(data=>{
       this.users = data;
       console.log(this.users);
-      this.projects.push(data[0].projects);
+      for(let user of this.users){
+        if(user.usernm === this.selectedUser){
+          console.log(user);
+          this.projects.push(...user.projects);
+        }
+      }
       this.projects = this.projects.flat();
       console.log(this.projects);
     })
