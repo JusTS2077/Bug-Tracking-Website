@@ -1,0 +1,33 @@
+@use 'variables' as v;
+
+.permspan{
+    display:grid;
+    height:100px;
+    grid-template-columns: auto auto auto auto;
+    grid-template-rows: auto auto;
+    position: absolute;
+    margin-top:100px;
+    padding:10px;
+}
+
+.permspan span{
+    margin:0;
+    margin-right:20px;
+}
+
+
+input:not(input[type="checkbox"]){
+    width:50%;
+}
+
+.forms .formbutton{
+    display:flex;
+    width:200px;
+    margin-top:110px;
+    margin-left:550px;
+}
+
+.forms{
+    height:max-content;
+    margin-top:100px;
+}

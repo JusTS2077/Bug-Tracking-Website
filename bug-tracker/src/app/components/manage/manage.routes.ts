@@ -6,6 +6,7 @@ import { ProjectsComponent } from "./projects/projects.component";
 import { StatusComponent } from "./status/status.component";
 import { TagComponent } from "./tag/tag.component";
 import { UserComponent } from "./user/user.component";
+import { UserGroupsComponent } from "./user-groups/user-groups.component";
 
 export const manageRoutes:Routes = [
     {
@@ -17,6 +18,7 @@ export const manageRoutes:Routes = [
             {path:"tag",component:TagComponent},
             {path:"status",component:StatusComponent},
             {path:"priority",component:PriorityComponent},
+            {path:"user-groups",component:UserGroupsComponent},
             {path:"",redirectTo:"projects",pathMatch:"full"}
         ]
     }

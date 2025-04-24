@@ -1,11 +1,41 @@
 import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { UserGroupServices } from './user-group.service';
+import { OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-user-groups',
-  imports: [],
+  imports: [FormsModule,CommonModule],
   templateUrl: './user-groups.component.html',
-  styleUrl: './user-groups.component.css'
+  styleUrl: '../../../../app/styles/user-groups.component.scss',
 })
-export class UserGroupsComponent {
+export class UserGroupsComponent implements OnInit{
 
+  constructor(private usergrp:UserGroupServices){}
+
+  isChecked=false;
+  showForm="";
+  usergroupnm="";
+  permlist:string[] = [];
+  perms!:any;
+
+  ngOnInit():void{
+    this.usergrp.getPerms().subscribe(data=>{
+      console.log(data);
+      this.perms = data;
+    })
+  }
+
+  hasChecked(event: any, permname: string) {
+    if (event.target.checked) {
+      if (!this.permlist.includes(permname)) {
+        this.permlist.push(permname);
+      }
+    } else {
+      this.permlist = this.permlist.filter(p => p !== permname);
+    }
+    console.log(this.permlist);
+  }
+  
 }

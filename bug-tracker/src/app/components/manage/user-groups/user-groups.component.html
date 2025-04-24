@@ -1,1 +1,39 @@
-<p>user-groups works!</p>
+<div class="maindiv">
+    <div class="heading">
+        <h1>User Groups</h1>
+    </div>
+    <div class="options">    
+        <button (click)="showForm='form1'">Add Group</button>
+        <button (click)="showForm='form2'">Update Permissions</button>
+    </div>
+
+    <div class="forms" *ngIf="showForm==='form1'" (keydown.escape)="showForm=''" tabindex="0">
+        <header>Add Usergroup</header>
+        <span>
+            <label>Group Name: </label>
+            <input>
+        </span><br>
+        <div class="permspan">
+            <span *ngFor="let perm of perms">
+                <label>{{perm.perm_name}}:</label>
+                <input type="checkbox" [value]="perm.perm_name" (change)="hasChecked($event,perm.perm_name)">
+            </span>
+        </div>
+        <div class="formbutton">
+            <button (click)="showForm=''">Close</button>
+            <button>Submit</button>
+        </div>
+
+    </div>
+
+    <div class="forms" *ngIf="showForm==='form2'">
+        <div>
+
+        </div>
+        <div class="formbutton">
+            <button (click)="showForm=''">Close</button>
+            <button>Submit</button>
+        </div>
+    </div>
+</div>
+

@@ -183,8 +183,30 @@ app.get('/users',async(req,res)=>{
         res.json(users.rows);
     }
     catch(err){
-        console.error("Error adding to table: ",err);
+        console.error("Error getting user data to table: ",err);
         res.status(500).json({message:"Error while trying to get user data from Database"});
+    }
+});
+
+app.get('/user-groups',async(req,res)=>{
+    try{
+        const users = await pool.query("SELECT * FROM access_level");
+        res.json(user.rows);
+    }
+    catch(err){
+        console.error("Error getting usergroup data from table: ",err);
+        res.status(500).json({message:"Error while trying to get user data from Database"});
+    }
+});
+
+app.get('/perms',async(req,res)=>{
+    try{
+        const perms = await pool.query("SELECT * FROM permissions");
+        res.json(perms.rows);
+    }
+    catch(err){
+        console.error("Error getting permission data from table: ",err);
+        res.status(500).json({message:"Error while trying to get permission data from Database"});
     }
 });
 
