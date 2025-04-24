@@ -11,17 +11,17 @@
         <header>Add Usergroup</header>
         <span>
             <label>Group Name: </label>
-            <input>
+            <input [(ngModel)]="usergroupnm">
         </span><br>
         <div class="permspan">
             <span *ngFor="let perm of perms">
                 <label>{{perm.perm_name}}:</label>
-                <input type="checkbox" [value]="perm.perm_name" (change)="hasChecked($event,perm.perm_name)">
+                <input type="checkbox" [value]="perm.perm_name" (change)="hasChecked($event,perm.id)">
             </span>
         </div>
         <div class="formbutton">
             <button (click)="showForm=''">Close</button>
-            <button>Submit</button>
+            <button (click)="addGroup()">Submit</button>
         </div>
 
     </div>

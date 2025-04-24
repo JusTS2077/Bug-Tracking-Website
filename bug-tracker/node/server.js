@@ -107,6 +107,27 @@ app.post('/add-user',async(req,res)=>{
     }
 });
 
+app.post('/add-group',async(req,res)=>{
+    try{
+        const {groupnm,perms} = req.body;
+        const insert_group = await pool.query("insert into access_level(access_name) values($1) returning id",[groupnm]);
+        const group_id = insert_group.rows[0].id;
+        const insertPermsPromises = perms.map(perm => {
+            return pool.query(
+              "INSERT INTO group_perms (group_id, perms_id) VALUES ($1, $2)",
+              [group_id, perm]
+            );
+        });
+    await Promise.all(insertPermsPromises);
+
+    res.status(200).json({ message: "Group and permissions added successfully." });
+    } 
+    catch (err) {
+        console.error("Error inserting group and perms:", err);
+        res.status(500).json({ error: "Something went wrong." });
+    }
+})
+
 //add tag
 app.post('/add-tag', async(req,res)=>{
     try{
@@ -311,7 +332,6 @@ app.get('/download-file/:id',async(req,res)=>{
       res.status(500).send("Download failed");
     }
 })
-  
 
 /*This section of code contains the API endpoints for the user to delete entries from database*/
 

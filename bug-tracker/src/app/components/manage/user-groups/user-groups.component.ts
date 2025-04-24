@@ -17,7 +17,7 @@ export class UserGroupsComponent implements OnInit{
   isChecked=false;
   showForm="";
   usergroupnm="";
-  permlist:string[] = [];
+  permlist:number[] = [];
   perms!:any;
 
   ngOnInit():void{
@@ -27,15 +27,21 @@ export class UserGroupsComponent implements OnInit{
     })
   }
 
-  hasChecked(event: any, permname: string) {
+  hasChecked(event: any, permid: number) {
     if (event.target.checked) {
-      if (!this.permlist.includes(permname)) {
-        this.permlist.push(permname);
+      if (!this.permlist.includes(permid)) {
+        this.permlist.push(permid);
       }
     } else {
-      this.permlist = this.permlist.filter(p => p !== permname);
+      this.permlist = this.permlist.filter(p => p !== permid);
     }
     console.log(this.permlist);
   }
-  
+
+  addGroup(){
+    this.usergrp.addGroup(this.usergroupnm,this.permlist).subscribe(()=>{
+      this.showForm="";
+    });
+  }
+
 }

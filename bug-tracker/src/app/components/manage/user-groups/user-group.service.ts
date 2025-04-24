@@ -13,5 +13,9 @@ export class UserGroupServices{
         return this.http.get(`http://localhost:5000/perms`);
     }
 
+    addGroup(groupnm:any,perms:any){
+        return this.http.post(`http://localhost:5000/add-group`,{groupnm,perms});
+    }
+
     
 }
