@@ -200,7 +200,7 @@ app.post('/add-issue',upload.single('file'),async(req,res)=>{
 /*This section of code contains the API endpoints for the GET requests*/
 app.get('/users',async(req,res)=>{
     try{
-        const users = await pool.query("SELECT * FROM Users");
+        const users = await pool.query("SELECT * FROM Users order by user_id");
         res.json(users.rows);
     }
     catch(err){
@@ -211,8 +211,8 @@ app.get('/users',async(req,res)=>{
 
 app.get('/user-groups',async(req,res)=>{
     try{
-        const users = await pool.query("SELECT * FROM access_level");
-        res.json(user.rows);
+        const users = await pool.query("SELECT * FROM access_level order by id");
+        res.json(users.rows);
     }
     catch(err){
         console.error("Error getting usergroup data from table: ",err);
@@ -222,7 +222,7 @@ app.get('/user-groups',async(req,res)=>{
 
 app.get('/perms',async(req,res)=>{
     try{
-        const perms = await pool.query("SELECT * FROM permissions");
+        const perms = await pool.query("SELECT * FROM permissions order by id");
         res.json(perms.rows);
     }
     catch(err){
@@ -231,9 +231,21 @@ app.get('/perms',async(req,res)=>{
     }
 });
 
+app.get('/group-perms/:id',async(req,res)=>{
+    try{
+        const {id} = req.params;
+        const perms = await pool.query("SELECT * FROM group_perms WHERE group_id=$1 ORDER BY $1",[id]);
+        res.json(perms.rows);
+    }
+    catch(err){
+        console.error("Error getting group permission data from table: ",err);
+        res.status(500).json({message:"Error while trying to get group permission data from table"});
+    }
+})
+
 app.get('/tags',async(req,res)=>{
     try{
-        const tags = await pool.query("SELECT * FROM tag");
+        const tags = await pool.query("SELECT * FROM tag order by id");
         res.json(tags.rows);
     }
     catch(err){
@@ -244,7 +256,7 @@ app.get('/tags',async(req,res)=>{
 
 app.get('/status',async(req,res)=>{
     try{
-        const status = await pool.query("SELECT * FROM status");
+        const status = await pool.query("SELECT * FROM status order by id");
         res.json(status.rows);
     }
     catch(err){
@@ -333,7 +345,9 @@ app.get('/download-file/:id',async(req,res)=>{
     }
 })
 
-/*This section of code contains the API endpoints for the user to delete entries from database*/
+/*
+*----This section of code contains the API endpoints for the user to delete entries from database------
+*/
 
 app.delete("/users/:id",async(req,res)=>{
     try{
@@ -396,7 +410,9 @@ app.delete("/priorities/:id",async(req,res)=>{
     }
 })
 
-/*This section of code contains the API Endpoints for the users to modify the data in the database*/
+/*
+*---This section of code contains the API Endpoints for the users to modify the data in the database--
+*/
 
 app.put('/users/:id', async (req, res) => {
     try {

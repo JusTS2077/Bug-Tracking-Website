@@ -7,6 +7,13 @@
         <button (click)="showForm='form2'">Update Permissions</button>
     </div>
 
+    <div class="tablecontainer">
+        <table class="blueTable">
+            <thead>
+
+            </thead>
+        </table>
+    </div>
     <div class="forms" *ngIf="showForm==='form1'" (keydown.escape)="showForm=''" tabindex="0">
         <header>Add Usergroup</header>
         <span>
@@ -16,7 +23,7 @@
         <div class="permspan">
             <span *ngFor="let perm of perms">
                 <label>{{perm.perm_name}}:</label>
-                <input type="checkbox" [value]="perm.perm_name" (change)="hasChecked($event,perm.id)">
+                <mat-checkbox [value]="perm.perm_name" (change)="hasChecked($event,perm.id)"></mat-checkbox>
             </span>
         </div>
         <div class="formbutton">
@@ -27,13 +34,29 @@
     </div>
 
     <div class="forms" *ngIf="showForm==='form2'">
-        <div>
-
+        <header>Update Permissions</header>
+        <span>
+            <mat-form-field appearance="fill" class="custom-select">
+                <mat-label>User Group</mat-label>
+                <mat-select [(ngModel)]="selectedGroup" (ngModelChange)="showPerms()">
+                    <mat-option></mat-option>
+                    <mat-option *ngFor="let group of grouplist" [value]="group.id" class="mat-option">
+                        {{group.access_name}}
+                    </mat-option>
+                </mat-select>
+              </mat-form-field>
+        </span>
+        <div class="permspan">
+            <span *ngFor="let perm of perms">
+                <label>{{perm.perm_name}}:</label>
+                <mat-checkbox (change)="checkedBox($event,perm.id)" [value]="perm.id"></mat-checkbox>
+            </span>
         </div>
         <div class="formbutton">
             <button (click)="showForm=''">Close</button>
             <button>Submit</button>
         </div>
     </div>
+    <p>{{selectedGroup}}</p>
 </div>
 
