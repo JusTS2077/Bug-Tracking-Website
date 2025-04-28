@@ -48,8 +48,11 @@
         </span>
         <div class="permspan">
             <span *ngFor="let perm of perms">
-                <label>{{perm.perm_name}}:</label>
-                <mat-checkbox (change)="checkedBox($event,perm.id)" [value]="perm.id"></mat-checkbox>
+                <mat-checkbox
+                [checked]="isPermissionSelected(perm.id)"
+                (change)="checkedBox($event, perm.id)">
+                {{ perm.perm_name }}
+              </mat-checkbox>    
             </span>
         </div>
         <div class="formbutton">
