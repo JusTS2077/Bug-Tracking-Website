@@ -234,7 +234,7 @@ app.get('/perms',async(req,res)=>{
 app.get('/group-perms/:id',async(req,res)=>{
     try{
         const {id} = req.params;
-        const perms = await pool.query("SELECT * FROM group_perms WHERE group_id=$1 ORDER BY $1",[id]);
+        const perms = await pool.query("SELECT * FROM group_perms WHERE group_id=$1 AND status_id=1 ORDER BY $1",[id]);
         res.json(perms.rows);
     }
     catch(err){
@@ -431,6 +431,48 @@ app.put('/users/:id', async (req, res) => {
     catch(err){
         console.error("Error: ",err);
         return res.status(500).json({message:"Error while trying to update user from Database"});
+    }
+})
+
+app.put("/user-groups/:id",async(req,res)=>{
+    const id = parseInt(req.params.id);
+    const currentPerms = await pool.query("SELECT * FROM group_perms WHERE group_id=$1",[id]);
+    const selectedPerms = req.body;
+    const selectedPermsSet = new Set(selectedPerms);
+    const currentPermsSet = new Set(currentPerms.rows.map(row=>row.perms_id));  
+    const permissionsToAdd = Array.from(selectedPermsSet).filter(perm => !currentPermsSet.has(perm));
+    const permissionsToRemove = Array.from(currentPermsSet).filter(perm => !selectedPermsSet.has(perm));
+    console.log("Request body: ",req.body);
+    console.log("Current permissions: ",currentPermsSet);
+    console.log("selected permissions:",selectedPermsSet);
+    console.log("permissions added: ",permissionsToAdd);
+    console.log("permissions removed:",permissionsToRemove);  
+    try{
+        await pool.query("BEGIN");
+
+        if(permissionsToRemove.length>0){
+            await pool.query("UPDATE group_perms SET status_id=3 where group_id=$1 AND perms_id= ANY($2::int[])"
+                ,[id,permissionsToRemove]
+            );
+        }
+
+        if(permissionsToAdd.length>0){
+            const insert = await pool.query(`INSERT INTO group_perms (group_id, perms_id, status_id)
+                                        SELECT $1, perm_id, 1
+                                        FROM unnest($2::int[]) AS perm_id
+                                        WHERE NOT EXISTS (
+                                        SELECT 1 FROM group_perms
+                                        WHERE group_id = $1 AND perms_id = perm_id)`,[id,permissionsToAdd]);
+        }
+
+        await pool.query("COMMIT");
+        console.log("Permissions updated successfully!")
+        res.status(200).json({message:"Permissions updated successfully!"});
+    }
+    catch(err){
+        await pool.query("ROLLBACK");
+        console.error("Error updating permissions:", err);
+        res.status(500).json({ message: 'Error updating permissions' });
     }
 })
 

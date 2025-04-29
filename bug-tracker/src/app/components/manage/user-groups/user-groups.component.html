@@ -14,7 +14,7 @@
             </thead>
         </table>
     </div>
-    <div class="forms" *ngIf="showForm==='form1'" (keydown.escape)="showForm=''" tabindex="0">
+    <div class="forms" *ngIf="showForm==='form1'" (keydown.escape)="closeForm()" tabindex="0">
         <header>Add Usergroup</header>
         <span>
             <label>Group Name: </label>
@@ -23,11 +23,11 @@
         <div class="permspan">
             <span *ngFor="let perm of perms">
                 <label>{{perm.perm_name}}:</label>
-                <mat-checkbox [value]="perm.perm_name" (change)="hasChecked($event,perm.id)"></mat-checkbox>
+                <mat-checkbox [value]="perm.perm_name" (change)="hasChecked($event,perm.id)" [checked]="isPermissionSelected(perm.id)"></mat-checkbox>
             </span>
         </div>
         <div class="formbutton">
-            <button (click)="showForm=''">Close</button>
+            <button (click)="closeForm()">Close</button>
             <button (click)="addGroup()">Submit</button>
         </div>
 
@@ -56,8 +56,8 @@
             </span>
         </div>
         <div class="formbutton">
-            <button (click)="showForm=''">Close</button>
-            <button>Submit</button>
+            <button (click)="closeForm()">Close</button>
+            <button (click)="updatePerms()">Submit</button>
         </div>
     </div>
     <p>{{selectedGroup}}</p>

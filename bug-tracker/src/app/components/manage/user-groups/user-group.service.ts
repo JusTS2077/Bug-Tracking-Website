@@ -24,4 +24,7 @@ export class UserGroupServices{
     getGroupPerms(id:number):Observable<any>{
         return this.http.get(`http://localhost:5000/group-perms/${id}`);
     }
+    updateGroupPerms(id:number,perms:any):Observable<any>{
+        return this.http.put(`http://localhost:5000/user-groups/${id}`,perms);
+    }
 }

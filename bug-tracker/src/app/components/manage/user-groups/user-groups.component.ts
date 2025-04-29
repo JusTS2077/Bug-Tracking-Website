@@ -19,7 +19,7 @@ export class UserGroupsComponent implements OnInit{
   isChecked = false;
   showForm = "";
   usergroupnm = "";
-  selectedGroup:number = 0;
+  selectedGroup:number|null = null;
   permlist = signal<number[]>([]);
   grp_permlist = signal<any[]>([]);
   grouplist!: any;
@@ -49,15 +49,30 @@ export class UserGroupsComponent implements OnInit{
   addGroup() {
     this.usergrp.addGroup(this.usergroupnm, this.permlist()).subscribe(() => {
       this.permlist.set([]);
-      this.showForm = "";
+      this.closeForm();
       this.ngOnInit();
     });
   }
 
   showPerms() {
-    this.usergrp.getGroupPerms(this.selectedGroup).subscribe(data => {
-      this.permlist.set(data.map((obj: any) => obj.perms_id));
-    });
+    if(!this.selectedGroup){
+      this.permlist.set([]);
+    }
+
+    if(this.selectedGroup !== null){
+      this.usergrp.getGroupPerms(this.selectedGroup).subscribe(data => {
+        this.permlist.set(data.map((obj: any) => obj.perms_id));
+        console.log(this.permlist());
+      });
+    }
+
+  }
+
+  closeForm(){
+    this.showForm='';
+    this.usergroupnm = '';
+    this.selectedGroup = null;
+    this.permlist.set([]);
   }
   
   isPermissionSelected(permid: number): boolean {
@@ -71,6 +86,17 @@ export class UserGroupsComponent implements OnInit{
       }
     } else {
       this.permlist.update(list => list.filter(p => p !== permid));
+    }
+    console.log("Permissions list during updation",this.permlist());
+  }
+
+  updatePerms(){
+    if(this.selectedGroup!==null){
+      this.usergrp.updateGroupPerms(this.selectedGroup,this.permlist()).subscribe(()=>{
+        this.closeForm();
+        this.ngOnInit();
+      })
+
     }
   }
 }
