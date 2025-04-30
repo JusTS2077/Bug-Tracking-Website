@@ -1,3 +1,4 @@
+<div *ngIf="decodedToken.role==='Admin'">
 <nav mat-tab-nav-bar class="navbar" [tabPanel]="tabPanel">
     <a mat-tab-link class="tab"
        [routerLink]="'/manage/projects'"
@@ -43,4 +44,4 @@
 </nav>
   
   <router-outlet></router-outlet>
-  
+</div>

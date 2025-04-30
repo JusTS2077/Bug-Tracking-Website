@@ -19,7 +19,7 @@ export class UserServices {
   }
 
   deleteUser(userId:number):Observable<any>{
-    return this.http.delete(`${this.apiUrl}/users/${userId}`)
+    return this.http.put(`${this.apiUrl}/users/${userId}`,{})
   }
 
   updateUser(id:number,user:any):Observable<any>{

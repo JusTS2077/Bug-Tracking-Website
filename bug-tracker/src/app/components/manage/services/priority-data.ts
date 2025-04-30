@@ -19,7 +19,7 @@ export class PriorityService{
     }
 
     deletePriority(id:number):Observable<any>{
-        return this.http.delete(`${this.apiUrl}/priorities/${id}`);
+        return this.http.put(`${this.apiUrl}/priorities/${id}`,{});
     }
 
     updatePriority(id:number,priority:any){

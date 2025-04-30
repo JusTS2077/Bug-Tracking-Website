@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { UserServices } from '../services/user-data';
+import { ProjectService } from '../services/project-data';
+import { UserGroupServices } from '../user-groups/user-group.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef } from '@angular/core';
-import { ProjectService } from '../services/project-data';
 import {MatSelectModule} from '@angular/material/select';
 import { MatOption } from '@angular/material/select';
 
@@ -34,12 +35,18 @@ export class UserComponent implements OnInit{
   userform=false;
   updateform=false;
 
-  users:{user_id:number;usernm:string;password:string;email:string;firstname:string;lastname:string;projects:string,department:string}[] = [];
+  users!:any;
   
   dropdownList:string[] = [];
   dropdownready=false;
 
-  constructor(private apiservice:UserServices,private cd:ChangeDetectorRef,private projectservice:ProjectService) {}
+  usergrouplist!:any;
+  selectedGroup="";
+
+  constructor(private apiservice:UserServices,
+    private cd:ChangeDetectorRef,
+    private projectservice:ProjectService,
+    private usergrpservice:UserGroupServices) {}
 
   ngOnInit(): void {
   
@@ -66,6 +73,10 @@ export class UserComponent implements OnInit{
     });
       this.dropdownready=true;
 
+    this.usergrpservice.getGroup().subscribe(data=>{
+      this.usergrouplist = data;
+    })
+
       console.log("Dropdown List (mapped):", this.dropdownList);
       this.cd.detectChanges();
   }
@@ -80,12 +91,12 @@ export class UserComponent implements OnInit{
   addUser(){
 
     console.log("Selected projects",this.selectedItems);
-    if (!this.usernm || !this.passwd || !this.email || !this.firstnm || !this.lastnm || !this.selectedDept || !this.selectedItems) {
+    if (!this.usernm || !this.passwd || !this.email || !this.firstnm || !this.lastnm || !this.selectedDept || !this.selectedItems || !this.selectedGroup) {
       this.validate = false;
       return;
     }
 
-    const newUser = {usernm:this.usernm,password:this.passwd,email:this.email,firstname:this.firstnm,lastname:this.lastnm,projects:this.selectedItems,department:this.selectedDept};
+    const newUser = {usernm:this.usernm,password:this.passwd,email:this.email,firstname:this.firstnm,lastname:this.lastnm,projects:this.selectedItems,role:this.selectedGroup,department:this.selectedDept};
     this.apiservice.addUser(newUser).subscribe(()=>{
       this.closeForm();
       this.ngOnInit();  
@@ -113,6 +124,7 @@ export class UserComponent implements OnInit{
 
   displayUpdateForm(selectedUser:any){
     this.selectedUser = {...selectedUser};
+    console.log(this.selectedUser);
     this.showForm = "form2";
     this.cd.detectChanges();
   } 
@@ -124,7 +136,7 @@ export class UserComponent implements OnInit{
       return;
     }
 
-    const updateuser = {usernm:this.selectedUser.usernm,password:this.selectedUser.password,email:this.selectedUser.email,firstname:this.selectedUser.firstname,lastname:this.selectedUser.lastname,department:this.selectedUser.department}
+    const updateuser = {usernm:this.selectedUser.usernm,password:this.selectedUser.password,email:this.selectedUser.email,firstname:this.selectedUser.firstname,lastname:this.selectedUser.lastname,projects:this.selectedUser.projects, role:this.selectedUser.role,department:this.selectedUser.department}
 
     this.apiservice.updateUser(this.selectedUser.user_id,this.selectedUser).subscribe(()=>{
       this.ngOnInit();

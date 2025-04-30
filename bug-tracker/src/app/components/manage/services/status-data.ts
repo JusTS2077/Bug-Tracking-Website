@@ -19,7 +19,7 @@ export class StatusService{
     }
 
     deleteStatus(id:any):Observable<any>{
-        return this.http.delete(`${this.apiUrl}/status/${id}`);
+        return this.http.put(`${this.apiUrl}/status/${id}`,{});
     }
 
     updateStatus(id:number,status:any){

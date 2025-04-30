@@ -5,6 +5,7 @@ import { FormsModule } from "@angular/forms";
 import { AuthService } from "./components/auth/auth.service";
 import { OnInit } from "@angular/core";
 import { jwtDecode } from "jwt-decode";
+import { ChangeDetectorRef } from "@angular/core";
 @Component({
   selector: "app-root",
   imports:[RouterModule,CommonModule,FormsModule],
@@ -20,25 +21,20 @@ export class AppComponent implements OnInit{
   decodedToken!:any;
   userclick=false;
 
-  constructor(public router:Router,private auth:AuthService){
+  constructor(public router:Router,private auth:AuthService,private cdr:ChangeDetectorRef){
+    this.decodedToken = this.auth.getDecodedToken();
+    console.log("Decoded token: ",this.decodedToken);
     this.router.events.subscribe(event =>{
       if(event instanceof NavigationEnd){
         this.isLoginPage = this.router.url === "/login";
       }
     });
 
+
   }
   ngOnInit(): void {
-    this.token = this.auth.getToken();
-    if(this.token){
-      try{
-        this.decodedToken = jwtDecode(this.token);
-      }
-      catch(err){
-        console.error("Failed to decode token:", err);
-        this.auth.logout();
-        this.router.navigate(['/login']);
-      }
+    if(this.auth.getToken()){
+      console.log("nice");
     }
     else{
       this.router.navigate(['/login'])

@@ -93,11 +93,11 @@ app.post("/login",async(req,res)=>{
 //add user
 app.post('/add-user',async(req,res)=>{
     try{
-        const {usernm,password,email,firstname,lastname,projects,department} = req.body;
+        const {usernm,password,email,firstname,lastname,projects,role,department} = req.body;
         const hashedpaswd = await bcrypt.hash(password,10);
         console.log(await req.body);
-        const insert = await pool.query("insert into users(usernm,password,email,firstname,lastname,projects,department) values($1,$2,$3,$4,$5,$6,$7)",
-            [usernm,hashedpaswd,email,firstname,lastname,projects,department]);
+        const insert = await pool.query("insert into users(usernm,password,email,firstname,lastname,projects,role,department) values($1,$2,$3,$4,$5,$6,$7,$8)",
+            [usernm,hashedpaswd,email,firstname,lastname,projects,role,department]);
         console.log("Succesfully inserted: ",insert.rows[0]);
         res.json(insert.rows[0]);
     }
@@ -197,10 +197,12 @@ app.post('/add-issue',upload.single('file'),async(req,res)=>{
     }
 })
 
-/*This section of code contains the API endpoints for the GET requests*/
+/*
+*This section of code contains the API endpoints for the GET requests
+*/
 app.get('/users',async(req,res)=>{
     try{
-        const users = await pool.query("SELECT * FROM Users order by user_id");
+        const users = await pool.query("SELECT * FROM Users where status_id=1 order by user_id");
         res.json(users.rows);
     }
     catch(err){
@@ -211,7 +213,7 @@ app.get('/users',async(req,res)=>{
 
 app.get('/user-groups',async(req,res)=>{
     try{
-        const users = await pool.query("SELECT * FROM access_level order by id");
+        const users = await pool.query("SELECT * FROM access_level  where status_id=1 order by id");
         res.json(users.rows);
     }
     catch(err){
@@ -222,7 +224,7 @@ app.get('/user-groups',async(req,res)=>{
 
 app.get('/perms',async(req,res)=>{
     try{
-        const perms = await pool.query("SELECT * FROM permissions order by id");
+        const perms = await pool.query("SELECT * FROM permissions where status_id=1 order by id ");
         res.json(perms.rows);
     }
     catch(err){
@@ -245,7 +247,7 @@ app.get('/group-perms/:id',async(req,res)=>{
 
 app.get('/tags',async(req,res)=>{
     try{
-        const tags = await pool.query("SELECT * FROM tag order by id");
+        const tags = await pool.query("SELECT * FROM tag where status_id=1 order by id");
         res.json(tags.rows);
     }
     catch(err){
@@ -256,7 +258,7 @@ app.get('/tags',async(req,res)=>{
 
 app.get('/status',async(req,res)=>{
     try{
-        const status = await pool.query("SELECT * FROM status order by id");
+        const status = await pool.query("SELECT * FROM status where status_id=1 order by id");
         res.json(status.rows);
     }
     catch(err){
@@ -267,7 +269,7 @@ app.get('/status',async(req,res)=>{
 
 app.get('/projects',async(req,res)=>{
     try{
-        const projects = await pool.query("SELECT * FROM project");
+        const projects = await pool.query("SELECT * FROM project where status_id=1 ORDER BY id");
         res.json(projects.rows);
     }
     catch(err){
@@ -278,7 +280,7 @@ app.get('/projects',async(req,res)=>{
 
 app.get('/priorities',async(req,res)=>{
     try{
-        const priorities = await pool.query("SELECT * FROM priority");
+        const priorities = await pool.query("SELECT * FROM priority  where status_id=1 ORDER BY id");
         res.json(priorities.rows);
     }
     catch(err){
@@ -292,7 +294,7 @@ app.get("/issue-filter", async (req, res) => {
     try {
       const { project, tag, status, priority, assigned_to } = req.query;
   
-      let query = `SELECT * FROM issues WHERE assigned_to='${assigned_to}' AND 1=1`;
+      let query = `SELECT * FROM issues WHERE assigned_to='${assigned_to}' AND status_id=1`;
       const values = [];
       let idx = 1;
   
@@ -313,7 +315,7 @@ app.get("/issue-filter", async (req, res) => {
         values.push(priority);
       }
   
-      const result = await pool.query(query, values);
+      const result = await pool.query(query+` ORDER BY issue_no`, values);
       res.json(result.rows);
       console.log("Successfully fetched filtered data!");
     } catch (err) {
@@ -346,13 +348,13 @@ app.get('/download-file/:id',async(req,res)=>{
 })
 
 /*
-*----This section of code contains the API endpoints for the user to delete entries from database------
+*----This section of code contains the API endpoints for the user to delete(setting status=3) entries from database------
 */
 
-app.delete("/users/:id",async(req,res)=>{
+app.put("/users/:id",async(req,res)=>{
     try{
         const id = req.params.id;
-        const user = await pool.query("DELETE FROM users WHERE user_id = $1",[id]);
+        const user = await pool.query("UPDATE users SET status_id = 3 WHERE user_id = $1",[id]);
         res.json(user.rows);
     }
     catch(err){
@@ -361,10 +363,10 @@ app.delete("/users/:id",async(req,res)=>{
     }
 })
 
-app.delete("/tags/:id",async(req,res)=>{
+app.put("/tags/:id",async(req,res)=>{
     try{
         const id = req.params.id;
-        const tags = await pool.query("DELETE FROM tag where id=$1",[id]);
+        const tags = await pool.query("UPDATE tag SET status_id=3 where id=$1",[id]);
         res.json(tags.rows);
     }
     catch(err){
@@ -374,10 +376,10 @@ app.delete("/tags/:id",async(req,res)=>{
 
 })
 
-app.delete("/status/:id",async(req,res)=>{
+app.put("/status/:id",async(req,res)=>{
     try{
         const id = req.params.id;
-        const status = await pool.query("DELETE FROM status where id=$1",[id]);
+        const status = await pool.query("UPDATE status SET status_id=3 where id=$1",[id]);
         res.json(status.rows);
     }
     catch(err){
@@ -386,10 +388,10 @@ app.delete("/status/:id",async(req,res)=>{
     }
 })
 
-app.delete("/projects/:id",async(req,res)=>{
+app.put("/projects/:id",async(req,res)=>{
     try{
         const id = req.params.id;
-        const project = await pool.query("DELETE FROM project WHERE id = $1",[id]);
+        const project = await pool.query("UPDATE project SET status_id=3 where id=$1",[id]);
         res.json(project.rows);
     }
     catch(err){
@@ -398,10 +400,10 @@ app.delete("/projects/:id",async(req,res)=>{
     }
 })
 
-app.delete("/priorities/:id",async(req,res)=>{
+app.put("/priorities/:id",async(req,res)=>{
     try{
         const id = req.params.id;
-        const priority = await pool.query("DELETE FROM priority WHERE id = $1",[id]);
+        const priority = await pool.query("UPDATE priority SET status_id=3 where id=$1",[id]);
         res.json(priority.rows);
     }
     catch(err){
@@ -417,13 +419,13 @@ app.delete("/priorities/:id",async(req,res)=>{
 app.put('/users/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const { usernm, email, firstname, lastname, department } = req.body;
+        const { usernm, email, firstname, lastname, projects, role, department } = req.body;
 
         const result = await pool.query(
             `UPDATE users 
-             SET usernm = $1, email = $2, firstname = $3, lastname = $4, department = $5
-             WHERE user_id = $6`,
-            [usernm, email, firstname, lastname, department, id]
+             SET usernm = $1, email = $2, firstname = $3, lastname = $4, projects=$5, role=$6,department = $7
+             WHERE user_id = $8`,
+            [usernm, email, firstname, lastname, projects, role, department, id]
         );
     res.json({ message: "User updated successfully", user: result.rows[0] });
 
@@ -543,6 +545,10 @@ app.put("/issues/:issue_no",async(req,res)=>{
         return res.status(500).json({message:err});
     }
 })
+
+/*
+*This section will contain API Endpoints for enabling or disabling users,projects,etc.(all kinds of records)
+*/
 
 
 /*This is to start the server*/

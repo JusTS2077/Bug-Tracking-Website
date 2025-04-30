@@ -1,9 +1,16 @@
 @use 'variables' as v;
-.forms .formbuttons{
-    display:flex;
-    position: absolute;
-    top:30.9vw;
-    left:32.1vw;
-    height:max-content;
-}
 
+
+.forms{ 
+    height:650px;
+    width:800px;
+    top:2vw;
+
+
+    .formbuttons{
+        display:flex;
+        flex-direction: row-reverse;
+        position: sticky;
+        height:max-content;
+    }
+}

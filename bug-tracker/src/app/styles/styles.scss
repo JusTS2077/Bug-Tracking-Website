@@ -117,12 +117,12 @@ header span{
 .forms{
     background-color:#ffffff;
     padding:10px;
-    top:8vw;
+    top:10vw;
     left:25vw;
     position:absolute;
     display:flex;
     flex-direction: column;
-    height:550px;
+    height:400px;
     width:800px;
     color:v.$fontclr_dark;
     border-radius:10px;
@@ -159,7 +159,8 @@ header span{
 
 .forms .formbuttons{
     display:flex;
-    position: absolute;
+    flex-direction: row-reverse;
+    position: sticky;
     top:30.9vw;
     left:32.1vw;
     height:max-content;
@@ -302,8 +303,8 @@ h1{
 
 .custom-select {
     width: 100%;
-    max-width: 400px;
-
+    max-width: 250px;
+    
     .mat-mdc-form-field-infix {
     height: 50px !important;
     display: flex;

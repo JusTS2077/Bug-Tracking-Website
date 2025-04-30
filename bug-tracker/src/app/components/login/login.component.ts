@@ -20,34 +20,31 @@ export class LoginComponent {
 
   constructor(private router:Router,private authservice:AuthService){}
 
-  login(){
-    
-    this.token = this.authservice.getToken();
-    if(this.token){
-      try{
-        this.decodedToken = jwtDecode(this.token);
-      }
-      catch(err){
-        console.error("Failed to decode token:", err);
-        this.authservice.logout();
-        this.router.navigate(['/login']);
-      }
-    }
-    else{
-      this.router.navigate(['/login'])
-    }
-
-    this.authservice.login(this.username,this.password).subscribe({
-      next:(res)=>{
+  login() {
+    this.authservice.login(this.username, this.password).subscribe({
+      next: (res) => {
         this.authservice.saveToken(res.token);
+        this.token = res.token;
+  
+        try {
+          this.decodedToken = jwtDecode(this.token);
+          console.log("Decoded Token:", this.decodedToken);
+        } catch (err) {
+          console.error("Failed to decode token:", err);
+          this.authservice.logout();
+          this.router.navigate(['/login']);
+          return;
+        }
+  
         alert("Logged in successfully!");
-        this.router.navigate(['/manage']);
+        this.router.navigate(['/view-issues']);
       },
-      error:(err) =>{
-        alert("Login failed "+err);
+      error: (err) => {
+        alert("Login failed: " + err.message);
       }
     });
   }
+  
 
   logout(){
     this.authservice.logout();

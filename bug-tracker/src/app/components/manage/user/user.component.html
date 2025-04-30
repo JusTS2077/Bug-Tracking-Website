@@ -17,6 +17,7 @@
             <th>Last name</th>
             <th>Projects</th>
             <th>Department</th>
+            <th>Role</th>
             <th>Update</th>
             <th>Delete</th>
         </tr>
@@ -30,6 +31,7 @@
             <td>{{pr?.lastname}}</td>
             <td>{{pr.projects}}</td>
             <td>{{pr?.department}}</td>
+            <td>{{pr?.role}}</td>
             <td><button (click)="displayUpdateForm(pr)"><img src="https://img.icons8.com/?size=100&id=71201&format=png&color=000000" width="16px" height="16px"></button></td>
             <td><button (click)="returnId(pr)">Delete</button></td>
         </tr>
@@ -95,6 +97,14 @@
             </mat-select>
           </mat-form-field>
       </span>
+      <span>
+        <mat-form-field appearance="fill" class="custom-select">
+            <mat-label>User Group</mat-label>
+            <mat-select [(ngModel)]="selectedGroup">
+                <mat-option *ngFor="let group of usergrouplist" [value]="group.access_name">{{group.access_name}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+      </span>
 
 
     <span class="formbuttons">
@@ -134,13 +144,22 @@
     <span>
         <mat-form-field appearance="fill" class="custom-select">
             <mat-label>Projects</mat-label>
-            <mat-select multiple [(value)]="selectedItems">
+            <mat-select multiple [(value)]="selectedUser.projects">
               <mat-option *ngFor="let project of dropdownList" [value]="project" class="mat-option">
                 {{ project }}
               </mat-option>
             </mat-select>
           </mat-form-field>
       </span>
+
+    <span>
+        <mat-form-field appearance="fill" class="custom-select">
+            <mat-label>User Group</mat-label>
+            <mat-select [(ngModel)]="selectedUser.role">
+                <mat-option *ngFor="let group of usergrouplist" [value]="group.access_name">{{group.access_name}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </span>
 
     <br>
     <span class="formbuttons">

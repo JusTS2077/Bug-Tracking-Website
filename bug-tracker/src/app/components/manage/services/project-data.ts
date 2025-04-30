@@ -19,7 +19,7 @@ export class ProjectService{
     }
 
     deleteProject(id:number):Observable<any>{
-        return this.http.delete(`${this.apiUrl}/projects/${id}`);
+        return this.http.put(`${this.apiUrl}/projects/${id}`,{});
     }
 
     updateProject(id:number,project:any){

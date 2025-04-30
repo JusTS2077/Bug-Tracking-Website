@@ -19,7 +19,7 @@ export class TagService{
     }
 
     deleteTag(id:number):Observable<any>{
-        return this.http.delete(`${this.apiUrl}/tags/${id}`);
+        return this.http.put(`${this.apiUrl}/tags/${id}`,{});
     }
 
     updateTag(id:number,tag:any){

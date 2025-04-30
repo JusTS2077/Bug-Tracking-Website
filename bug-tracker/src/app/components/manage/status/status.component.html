@@ -37,7 +37,6 @@
     <label for="tagname">Status Name: </label>
     <input type="text" id="tagname" [(ngModel)]="status_nm">
     <small class="errormsg" *ngIf="!validate && status_nm===''">*Required</small>
-
   </span><br>
   <span>
   <textarea id="remarks" placeholder="Write remarks here" [(ngModel)]="status_remarks"></textarea><br>
