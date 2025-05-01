@@ -25,4 +25,8 @@ export class ProjectService{
     updateProject(id:number,project:any){
         return this.http.put(`${this.apiUrl}/projects/${id}`,project);
     }
+
+    toggleProject(id:number){
+        return this.http.put(`${this.apiUrl}/projects/${id}/toggle-status`,{});
+    }
 }

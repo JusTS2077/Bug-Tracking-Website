@@ -12,7 +12,7 @@ import { PriorityService } from '../services/priority-data';
 })
 export class PriorityComponent implements OnInit{
 
-  priority:{id:number;name:string;remarks:string}[] = [];
+  priority!:any;
   priority_nm = "";
   priority_remarks = "";
 
@@ -69,6 +69,12 @@ export class PriorityComponent implements OnInit{
   updatePriority(){
     const arr = {name:this.selectedUser.name,remarks:this.selectedUser.remarks};
     this.priorityService.updatePriority(this.selectedUser.id,arr).subscribe(()=>{
+      this.ngOnInit();
+    })
+  }
+
+  togglePriority(id:number){
+    this.priorityService.togglePriority(id).subscribe(()=>{
       this.ngOnInit();
     })
   }

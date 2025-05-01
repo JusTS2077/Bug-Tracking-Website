@@ -25,4 +25,8 @@ export class PriorityService{
     updatePriority(id:number,priority:any){
         return this.http.put(`${this.apiUrl}/priority/${id}`,priority);
     }
+
+    togglePriority(id:number){
+        return this.http.put(`${this.apiUrl}/priorities/${id}/toggle-status`,{});
+    }
 }

@@ -251,6 +251,11 @@ table.blueTable tr:nth-child(even) td {
     background-color: v.$table_sec;
 }
 
+table.blueTable tr.disabled td {
+    background-color: #f0f0f0 !important;
+    color: #999;
+  }
+
 .heading{
     width:86.5%;
     height:max-content;
@@ -333,6 +338,7 @@ h1{
     }
     }
 }
+
 
 :root {
     --mat-option-label-text-color: rgb(0, 0, 0);

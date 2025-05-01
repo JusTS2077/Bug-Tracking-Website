@@ -141,7 +141,12 @@ export class UserComponent implements OnInit{
     this.apiservice.updateUser(this.selectedUser.user_id,this.selectedUser).subscribe(()=>{
       this.ngOnInit();
     })
+  }
 
+  toggleUser(id:number){
+    this.apiservice.toggleUser(id).subscribe(()=>{
+      this.ngOnInit();
+    })
   }
 
 }

@@ -25,4 +25,7 @@ export class UserServices {
   updateUser(id:number,user:any):Observable<any>{
     return this.http.put(`${this.apiUrl}/users/${id}`,user);
   }
+  toggleUser(id:number){
+    return this.http.put(`${this.apiUrl}/users/${id}/toggle-status`,{});
+  }
 }

@@ -15,7 +15,7 @@ export class TagComponent implements OnInit{
 
   showForm="";
 
-  tags:{id:number;name:string;remarks:string}[] = [];
+  tags!:any;
   tag_name = "";
   tag_remarks = "";
 
@@ -74,6 +74,12 @@ export class TagComponent implements OnInit{
     this.tagservice.updateTag(this.selectedUser.id,arr).subscribe(()=>{
       this.ngOnInit();
       this.showForm="";
+    })
+  }
+
+  toggleTag(id:number){
+    this.tagservice.toggleTag(id).subscribe(()=>{
+      this.ngOnInit();
     })
   }
 }

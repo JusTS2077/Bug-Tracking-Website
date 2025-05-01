@@ -12,7 +12,7 @@ import { ProjectService } from '../services/project-data';
 })
 export class ProjectsComponent implements OnInit{ 
 
-  data:{id:number;name:string;remarks:string}[] = [];
+  data!:any;
   proj_name = "";
   proj_remarks = "";
 
@@ -66,6 +66,12 @@ export class ProjectsComponent implements OnInit{
   updateProject(){
     const arr = {name:this.selectedUser.name,remarks:this.selectedUser.remarks};
     this.projectService.updateProject(this.selectedUser.id,arr).subscribe(()=>{
+      this.ngOnInit();
+    })
+  }
+
+  toggleProject(id:number){
+    this.projectService.toggleProject(id).subscribe(()=>{
       this.ngOnInit();
     })
   }

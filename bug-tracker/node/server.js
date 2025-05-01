@@ -202,7 +202,7 @@ app.post('/add-issue',upload.single('file'),async(req,res)=>{
 */
 app.get('/users',async(req,res)=>{
     try{
-        const users = await pool.query("SELECT * FROM Users where status_id=1 order by user_id");
+        const users = await pool.query("SELECT * FROM Users where status_id IN (1,2) order by user_id");
         res.json(users.rows);
     }
     catch(err){
@@ -213,7 +213,7 @@ app.get('/users',async(req,res)=>{
 
 app.get('/user-groups',async(req,res)=>{
     try{
-        const users = await pool.query("SELECT * FROM access_level  where status_id=1 order by id");
+        const users = await pool.query("SELECT * FROM access_level  where status_id IN (1,2) order by id");
         res.json(users.rows);
     }
     catch(err){
@@ -224,7 +224,7 @@ app.get('/user-groups',async(req,res)=>{
 
 app.get('/perms',async(req,res)=>{
     try{
-        const perms = await pool.query("SELECT * FROM permissions where status_id=1 order by id ");
+        const perms = await pool.query("SELECT * FROM permissions where status_id IN (1,2)  order by id ");
         res.json(perms.rows);
     }
     catch(err){
@@ -236,7 +236,7 @@ app.get('/perms',async(req,res)=>{
 app.get('/group-perms/:id',async(req,res)=>{
     try{
         const {id} = req.params;
-        const perms = await pool.query("SELECT * FROM group_perms WHERE group_id=$1 AND status_id=1 ORDER BY $1",[id]);
+        const perms = await pool.query("SELECT * FROM group_perms WHERE group_id=$1 AND status_id IN (1,2)  ORDER BY $1",[id]);
         res.json(perms.rows);
     }
     catch(err){
@@ -247,7 +247,7 @@ app.get('/group-perms/:id',async(req,res)=>{
 
 app.get('/tags',async(req,res)=>{
     try{
-        const tags = await pool.query("SELECT * FROM tag where status_id=1 order by id");
+        const tags = await pool.query("SELECT * FROM tag where status_id IN (1,2) order by id");
         res.json(tags.rows);
     }
     catch(err){
@@ -258,7 +258,7 @@ app.get('/tags',async(req,res)=>{
 
 app.get('/status',async(req,res)=>{
     try{
-        const status = await pool.query("SELECT * FROM status where status_id=1 order by id");
+        const status = await pool.query("SELECT * FROM status where status_id IN (1,2) order by id");
         res.json(status.rows);
     }
     catch(err){
@@ -269,7 +269,7 @@ app.get('/status',async(req,res)=>{
 
 app.get('/projects',async(req,res)=>{
     try{
-        const projects = await pool.query("SELECT * FROM project where status_id=1 ORDER BY id");
+        const projects = await pool.query("SELECT * FROM project where status_id IN (1,2) ORDER BY id");
         res.json(projects.rows);
     }
     catch(err){
@@ -280,7 +280,7 @@ app.get('/projects',async(req,res)=>{
 
 app.get('/priorities',async(req,res)=>{
     try{
-        const priorities = await pool.query("SELECT * FROM priority  where status_id=1 ORDER BY id");
+        const priorities = await pool.query("SELECT * FROM priority  where status_id IN (1,2) ORDER BY id");
         res.json(priorities.rows);
     }
     catch(err){
@@ -294,7 +294,7 @@ app.get("/issue-filter", async (req, res) => {
     try {
       const { project, tag, status, priority, assigned_to } = req.query;
   
-      let query = `SELECT * FROM issues WHERE assigned_to='${assigned_to}' AND status_id=1`;
+      let query = `SELECT * FROM issues WHERE assigned_to='${assigned_to}' AND status_id IN (1,2)`;
       const values = [];
       let idx = 1;
   
@@ -547,8 +547,111 @@ app.put("/issues/:issue_no",async(req,res)=>{
 })
 
 /*
-*This section will contain API Endpoints for enabling or disabling users,projects,etc.(all kinds of records)
+*This section contains API Endpoints for enabling or disabling users,projects,etc.(all kinds of records)
 */
+
+
+app.put("/users/:id/toggle-status", async (req, res) => {
+    try {
+        const id = req.params.id;
+        const result = await pool.query("SELECT status_id FROM users WHERE user_id = $1", [id]);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const currentStatus = result.rows[0].status_id;
+        const newStatus = currentStatus === 2 ? 1 : 2;
+
+        const updateResult = await pool.query("UPDATE users SET status_id = $1 WHERE user_id = $2 RETURNING *", [newStatus, id]);
+        res.json(updateResult.rows[0]);
+    } catch (err) {
+        console.error("Error while toggling status: ", err);
+        return res.status(500).json({ message: "Error while toggling user status in Database" });
+    }
+});
+
+app.put("/tags/:id/toggle-status",async(req,res)=>{
+    try {
+        const id = req.params.id;
+        const result = await pool.query("SELECT status_id FROM tag WHERE id = $1", [id]);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: "Tag not found" });
+        }
+
+        const currentStatus = result.rows[0].status_id;
+        const newStatus = currentStatus === 2 ? 1 : 2;
+
+        const updateResult = await pool.query("UPDATE tag SET status_id = $1 WHERE id = $2 RETURNING *", [newStatus, id]);
+        res.json(updateResult.rows[0]);
+    } catch (err) {
+        console.error("Error while toggling status: ", err);
+        return res.status(500).json({ message: "Error while toggling status in Database" });
+    }
+
+});
+
+app.put("/status/:id/toggle-status",async(req,res)=>{
+    try {
+        const id = req.params.id;
+        const result = await pool.query("SELECT status_id FROM status WHERE id = $1", [id]);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: "Status not found" });
+        }
+
+        const currentStatus = result.rows[0].status_id;
+        const newStatus = currentStatus === 2 ? 1 : 2;
+
+        const updateResult = await pool.query("UPDATE status SET status_id = $1 WHERE id = $2 RETURNING *", [newStatus, id]);
+        res.json(updateResult.rows[0]);
+    } catch (err) {
+        console.error("Error while toggling status: ", err);
+        return res.status(500).json({ message: "Error while toggling status in Database" });
+    }
+})
+
+app.put("/projects/:id/toggle-status",async(req,res)=>{
+    try {
+        const id = req.params.id;
+        const result = await pool.query("SELECT status_id FROM project WHERE id = $1", [id]);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: "Project not found" });
+        }
+
+        const currentStatus = result.rows[0].status_id;
+        const newStatus = currentStatus === 2 ? 1 : 2;
+
+        const updateResult = await pool.query("UPDATE project SET status_id = $1 WHERE id = $2 RETURNING *", [newStatus, id]);
+        res.json(updateResult.rows[0]);
+    } catch (err) {
+        console.error("Error while toggling status: ", err);
+        return res.status(500).json({ message: "Error while toggling status in Database" });
+    }
+})
+
+app.put("/priorities/:id/toggle-status",async(req,res)=>{
+    try {
+        const id = req.params.id;
+        const result = await pool.query("SELECT status_id FROM priority WHERE id = $1", [id]);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: "Priority not found" });
+        }
+
+        const currentStatus = result.rows[0].status_id;
+        const newStatus = currentStatus === 2 ? 1 : 2;
+
+        const updateResult = await pool.query("UPDATE priority SET status_id = $1 WHERE id = $2 RETURNING *", [newStatus, id]);
+        res.json(updateResult.rows[0]);
+    } catch (err) {
+        console.error("Error while toggling status: ", err);
+        return res.status(500).json({ message: "Error while toggling status in Database" });
+    }
+})
+
 
 
 /*This is to start the server*/

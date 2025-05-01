@@ -12,7 +12,7 @@ import { StatusService } from '../services/status-data';
 })
 export class StatusComponent implements OnInit {
 
-  status:{id:number;name:string;remarks:string}[] = [];
+  status!:any;
   
   status_nm = "";
   status_remarks="";
@@ -67,6 +67,12 @@ export class StatusComponent implements OnInit {
   updateStatus(){
     const arr = {name:this.selectedUser.name,remarks:this.selectedUser.remarks};
     this.statusService.updateStatus(this.selectedUser.id,arr).subscribe(()=>{
+      this.ngOnInit();
+    })
+  }
+
+  toggleStatus(id:number){
+    this.statusService.toggleStatus(id).subscribe(()=>{
       this.ngOnInit();
     })
   }

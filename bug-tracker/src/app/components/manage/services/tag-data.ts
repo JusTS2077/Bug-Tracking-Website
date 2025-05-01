@@ -25,4 +25,8 @@ export class TagService{
     updateTag(id:number,tag:any){
         return this.http.put(`${this.apiUrl}/tags/${id}`,tag);
     }
+
+    toggleTag(id:number){
+        return this.http.put(`${this.apiUrl}/tags/${id}/toggle-status`,{});
+    }
 }

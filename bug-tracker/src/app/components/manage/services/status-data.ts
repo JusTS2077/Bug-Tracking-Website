@@ -25,4 +25,8 @@ export class StatusService{
     updateStatus(id:number,status:any){
         return this.http.put(`${this.apiUrl}/status/${id}`,status);
     }
+
+    toggleStatus(id:number){
+        return this.http.put(`${this.apiUrl}/status/${id}/toggle-status`,{});
+    }
 }
