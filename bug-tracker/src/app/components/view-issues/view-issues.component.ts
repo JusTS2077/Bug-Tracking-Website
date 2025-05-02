@@ -38,6 +38,10 @@ export class ViewIssuesComponent implements OnInit {
   showEdit = false;
   selectedFile:File | null = null;
   showComments = false;
+  comment = "";
+  showAddComment = false;
+  commentId!:number;
+  commentlist!:any;
   
   token!:any;
   decodedToken!:any;
@@ -209,6 +213,26 @@ export class ViewIssuesComponent implements OnInit {
     // Send the request using HttpClient or XMLHttpRequest
     this.viewservice.updateIssues(this.selectedIssue.issue_no,formData).subscribe((res)=>{
       console.log("Success: ",res);
+    })
+  }
+
+  addComment(){
+    const data = {user:this.decodedToken.user,comment:this.comment,issue_id:this.commentId};
+    this.viewservice.addComment(data).subscribe(()=>{
+      this.getComment();
+    });
+  }
+
+  commentFunc(issue_no:number){
+    this.showComments=true;
+    this.commentId=issue_no;
+    this.getComment();
+  }
+
+  getComment(){
+    this.viewservice.getComments(this.commentId).subscribe((data:any)=>{
+      this.commentlist = data;
+      console.log(data);
     })
   }
 }

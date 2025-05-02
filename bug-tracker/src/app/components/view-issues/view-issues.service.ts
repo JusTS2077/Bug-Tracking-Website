@@ -32,4 +32,12 @@ export class ViewIssuesService{
     getFile(issueid: number,fileid:number): Observable<Blob> {
         return this.http.get(`http://localhost:5000/view-file/${issueid}/${fileid}`, { responseType: 'blob' });
     }
+
+    addComment(data:any){
+      return this.http.post('http://localhost:5000/add-comment',data);
+    }
+
+    getComments(id:number){
+      return this.http.get(`http://localhost:5000/comments/${id}`);
+    }
 }

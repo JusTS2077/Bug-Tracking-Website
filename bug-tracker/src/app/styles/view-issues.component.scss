@@ -40,9 +40,6 @@
 
 }
 
-
-
-
 .filters span:first-child{
     width:100px;
     margin-top:12px;
@@ -133,4 +130,89 @@
         width: 100%;
         border: 0;
     }
+}
+
+.deleteBox{
+    margin-left:100px;
+    width:50%;
+    header{
+        position: sticky;
+        width:100%;
+    }
+    textarea{
+        width:90%;
+        height:30px;
+        position: absolute;
+        margin-top:50px;
+        margin-right:5%;
+    }
+    span{
+        display: flex;
+        button{
+            width:150px;
+            margin-top:60px;
+        }
+    }
+
+}
+
+.commentform{
+    background-color:#ffffff;
+    padding:10px;
+    top:10vw;
+    left:25vw;
+    position:absolute;
+    display:flex;
+    flex-direction: column;
+    height:400px;
+    width:800px;
+    color:v.$fontclr_dark;
+    border-radius:10px;
+    box-shadow:0px 0px 6px 1000px rgba(0,0,0,0.3);
+    z-index: 999;
+
+    span:not(.formbuttons){
+        margin-top:20px;
+        padding-top:5px;
+        padding-left:5px;        
+        box-shadow: 0px 0px 6px 3px rgb(0, 0, 0,0.1);
+    }
+
+
+    header{
+        width:100%;
+        padding:10px;
+        margin:-10px;
+        background-color:v.$primary;
+        color:v.$fontclr_light;
+        border-radius:8px 8px 0px 0px;
+    }
+
+    
+    .formbuttons{
+        display:flex;
+        flex-direction: row-reverse;
+        position: sticky;
+        top:32.9vw;
+        left:57.1vw;
+        height:max-content;
+        width:max-content;
+        padding:2px;
+    }
+
+    button{
+
+        width:150px;
+        height:50px;
+        background-color: v.$secondary;
+        border: 0;
+        margin-right:0px;
+        color:white;
+        &:last-child{
+            margin-right: 10px;
+        }
+    }
+
+    
+
 }

@@ -210,8 +210,8 @@ app.post('/add-issue', upload.array('files'), async (req, res) => {
 
 app.post('/add-comment',async(req,res)=>{
     try{
-        const {user,comment,time} = req.body;
-        const query = await pool.query("INSERT INTO comments(commented_by, comment_desc, commented_on) values($1,$2,$3) RETURNING 1",[user,comment,time]);
+        const {user,comment,issue_id} = req.body;
+        const query = await pool.query("INSERT INTO comments(commented_by, comment_desc,issue_id) values($1,$2,$3) RETURNING 1",[user,comment,issue_id]);
         if(query.rowCount>0){
             console.log("Inserted comment successfully");
         }
@@ -408,9 +408,10 @@ app.get("/issue-filter", authenticateToken, async (req, res) => {
     }
 });
 
-app.get("/comments",async(req,res)=>{
+app.get("/comments/:issue_id",async(req,res)=>{
     try{
-        const comments = await pool.query("SELECT * FROM comments");
+        const id = req.params.issue_id;
+        const comments = await pool.query("SELECT *,TO_CHAR(commented_on, 'YYYY-MM-DD HH24:MI:SS') AS commented_on FROM comments where issue_id = $1",[id]);
         res.json(comments.rows);
     }
     catch(err){

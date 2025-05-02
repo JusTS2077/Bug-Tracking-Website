@@ -97,7 +97,7 @@
                   </td>                
                   <td></td>
                 <td><button (click)="showForm=true;selectedIssue=issue"><img src="https://img.icons8.com/?size=100&id=1755&format=png&color=000000"></button></td>
-                <td><button (click)="showComments=true"><img src="https://img.icons8.com/?size=100&id=143&format=png&color=000000"></button></td>
+                <td><button (click)="commentFunc(issue.issue_no)"><img src="https://img.icons8.com/?size=100&id=143&format=png&color=000000"></button></td>
             </tr>
         </tbody>
     </table>
@@ -180,12 +180,24 @@
     </span>
   </div>
 
-  <div *ngIf="showComments" class="forms">
+  <div *ngIf="showComments" class="commentform">
     <header>Issue Comments</header>
-    <span></span>
+    <span *ngFor="let comment of commentlist">
+        <h4>{{comment.commented_by}}</h4>
+        <h5>{{comment.commented_on}}</h5>
+        <p>{{comment.comment_desc}}</p>
+    </span>
     <span class="formbuttons">
-        <button>Add Comment</button>
+        <button (click)="showAddComment=true">Add Comment</button>
         <button (click)="showComments=false">Close</button>
     </span>
-
 </div>
+
+<span *ngIf="showAddComment" class="deleteBox">
+    <header>Add Comment</header>
+    <textarea [(ngModel)]="comment"></textarea>
+    <span>
+        <button (click)="addComment()">Submit</button>
+        <button (click)="showAddComment=false">Close</button>
+    </span>
+</span>
