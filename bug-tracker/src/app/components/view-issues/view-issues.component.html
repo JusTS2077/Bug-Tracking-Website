@@ -8,8 +8,8 @@
         <mat-form-field class="no-underline">
             <mat-select [(value)]="project_filter" (selectionChange)="filterby()">
               <mat-option [value]="'All'">All</mat-option>
-              <mat-option *ngFor="let project of project_list" [value]="project">
-                {{ project }}
+              <mat-option *ngFor="let issue of issues" [value]="issue.project">
+                {{ issue.project }}
               </mat-option>
             </mat-select>
           </mat-form-field>
@@ -41,6 +41,21 @@
                 <option *ngFor="let issue of issues" [value]="issue.priority">{{issue.priority}}</option>
             </select>
         </span>
+        <span>
+            <label>Assigned To:</label>
+            <select [(ngModel)]="assignedto_filter" (change)="filterby()">
+                <option [value]="'All'">All</option>
+                <option *ngFor="let issue of issues" [value]="issue.assigned_to">{{issue.assigned_to}}</option>
+            </select>
+        </span>
+        <span>
+            <label for="startDate">Start Date:</label>
+            <input type="date" id="startDate" [(ngModel)]="startDate" name="startDate" required (change)="filterby()">
+        </span>
+        <span>
+            <label for="endDate">End Date:</label>
+            <input type="date" id="endDate" [(ngModel)]="endDate" name="endDate" required>
+        </span>
 
     </div>
 
@@ -50,66 +65,127 @@
             <tr>
                 <th>Issue_no</th>
                 <th>Project</th>
-                <th>Tag</th>
-                <th>Status</th>
                 <th>Priority</th>
                 <th>Title</th>
-                <th>Description</th>
+                <th>Assigned To</th>
+                <th>Reported On</th>
+                <th>Tag</th>
+                <th>Status</th>
                 <th>File</th>
-                <th>Issue Status</th>
+                <th>Toggle</th>
                 <th>Expand</th>
+                <th>Comments</th>
             </tr>
         </thead>
         <tbody>
             <tr *ngFor="let issue of issues">
                 <td>{{issue.issue_no}}</td>
                 <td>{{issue.project}}</td>
-                <td>{{issue.tag}}</td>
-                <td>{{issue.status}}</td>
+
                 <td>{{issue.priority}}</td>
                 <td>{{issue.title}}</td>
-                <td>{{issue.description}}</td>
-                <td>{{issue.file_name}}</td>
-                <td>{{issue.issue_status}}</td>
+                <td>{{issue.assigned_to}}</td>
+                <td>{{issue.formatted_reported_on}}</td>
+                <td>{{issue.tag}}</td>
+                <td>{{issue.status}}</td>
+                <td>
+                    <ng-container *ngFor="let file of issue.attachments">
+                      <div>
+                        <button (click)="viewFile(issue.issue_no, file.id)"><img src="https://img.icons8.com/?size=100&id=55&format=png&color=000000"></button>
+                      </div>
+                    </ng-container>
+                  </td>                
+                  <td></td>
                 <td><button (click)="showForm=true;selectedIssue=issue"><img src="https://img.icons8.com/?size=100&id=1755&format=png&color=000000"></button></td>
+                <td><button (click)="showComments=true"><img src="https://img.icons8.com/?size=100&id=143&format=png&color=000000"></button></td>
             </tr>
         </tbody>
     </table>
 </div>
 </div>
+<div *ngIf="showPreview" class="preview-modal">
+    <header>    
+        <button (click)="showPreview = false">X</button>
+    </header>
+    
+    <!-- Display the preview based on the file type -->
+    <iframe *ngIf="showPreview" [src]="previewFileUrl" width="100%" height="600px"></iframe>
+</div>
 
 <div *ngIf="showForm" class="forms">
-    <header>Issue details</header>
+    <header>Issue details</header><br>
+    <span>
+        <label>Reported By: </label>
+        <label>{{selectedIssue.reported_by}}</label>
+    </span>
+    <span>
+        <label>Reported On: </label>
+        <label>{{selectedIssue.formatted_reported_on}}</label>
+    </span>
+    <span>
+        <label>Assigned To: </label>
+        <label *ngIf="!showEdit">{{selectedIssue.assigned_to}}</label>
+        <input *ngIf="showEdit" [(ngModel)]="selectedIssue.assigned_to">
+    </span>
     <span>
       <label for="tagname">Project Name: </label>
-      <label>{{selectedIssue.project}}</label>
+      <label *ngIf="!showEdit">{{selectedIssue.project}}</label>
+      <input *ngIf="showEdit" [(ngModel)]="selectedIssue.project">
     </span>
     <span>
-        <label>Tag: </label>
-        <label>{{selectedIssue.tag}}</label>
+      <label>Tag: </label>
+      <label *ngIf="!showEdit">{{selectedIssue.tag}}</label>
+      <input *ngIf="showEdit" [(ngModel)]="selectedIssue.tag">
     </span>
     <span>
-        <label>Status:</label>
-        <label>{{selectedIssue.status}}</label>
+      <label>Status:</label>
+      <label *ngIf="!showEdit">{{selectedIssue.status}}</label>
+      <input *ngIf="showEdit" [(ngModel)]="selectedIssue.status ">
     </span>
     <span>
-        <label>Priority:</label>
-        <label>{{selectedIssue.priority}}</label>
+      <label>Priority:</label>
+      <label *ngIf="!showEdit">{{selectedIssue.priority}}</label>
+      <input *ngIf="showEdit" [(ngModel)]="selectedIssue.priority">
     </span>
     <span>
-        <label>Title:</label>
-        <label>{{selectedIssue.title}}</label>
+      <label>Title:</label>
+      <label *ngIf="!showEdit">{{selectedIssue.title}}</label>
+      <input *ngIf="showEdit" [(ngModel)]="selectedIssue.title ">
     </span>
     <span>
-        <label>Description:</label>
-        <label>{{selectedIssue.description}}</label>
+      <label>Description:</label>
+      <label *ngIf="!showEdit">{{selectedIssue.description}}</label>
+      <input *ngIf="showEdit" [(ngModel)]="selectedIssue.description ">
     </span>
-    <span class="filespan">
-        <label>File</label>
-        <label>{{selectedIssue.file_name}}</label>
-        <button (click)="downloadFile(selectedIssue.issue_no)">Download</button>
-    </span>
+
+    <span>
+        <label for="fileInput">File (Optional): </label>
+        <input type="file" (change)="onFileSelected($event)" *ngIf="showEdit">
+      </span>
+    
+    <!-- Display multiple attachments -->
+    <div *ngIf="selectedIssue.attachments && selectedIssue.attachments.length > 0">
+      <label>Attachments:</label>
+      <ul>
+        <li *ngFor="let attachment of selectedIssue.attachments">
+          <label>{{ attachment.file_name }}</label>
+          <button class="filedownload" (click)="downloadFile(selectedIssue.issue_no, attachment.id)">Download</button>
+        </li>
+      </ul>
+    </div>
     <span class="formbuttons">
-      <button  (click)="showForm=false">Close</button>
+        <button *ngIf="!showEdit" (click)="showEdit=true">Edit</button>
+        <button *ngIf="showEdit" (click)="updateIssue()">Submit</button>
+        <button (click)="showForm = false;showEdit=false">Close</button>
     </span>
   </div>
+
+  <div *ngIf="showComments" class="forms">
+    <header>Issue Comments</header>
+    <span></span>
+    <span class="formbuttons">
+        <button>Add Comment</button>
+        <button (click)="showComments=false">Close</button>
+    </span>
+
+</div>

@@ -24,7 +24,8 @@ export class ReportIssueComponent implements OnInit{
   selectedStatus!:string;
   selectedProject!:string;
   selectedPriority!:string;
-  selectedFile!:File;
+  selectedFile!:File[];
+  assignedTo!:string;
   title!:string;
   description!:string;
 
@@ -32,12 +33,22 @@ export class ReportIssueComponent implements OnInit{
   decodedToken!:any;
 
 
-  onFileSelected(event:any){
-    this.selectedFile = event.target.files[0];
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files) {
+      this.selectedFile = Array.from(input.files);
+      console.log('Selected files:', this.selectedFile);
+    }
   }
 
-  clearFile(fileInput:HTMLInputElement){
+  removeFile(index: number): void {
+    this.selectedFile.splice(index, 1);
+  }
+  
+  clearFile(fileInput: HTMLInputElement): void {
     fileInput.value = '';
+    this.selectedFile = [];
+    console.log('File input cleared');
   }
 
   constructor(private reportservice:ReportIssueService,private authservice:AuthService){}
@@ -49,7 +60,7 @@ export class ReportIssueComponent implements OnInit{
     this.selectedUser = this.decodedToken.user;
 
     this.reportservice.getUsers().subscribe(data=>{
-      this.users = data;
+      this.users = data.filter((e:any)=>e.status_id===1);
       console.log(this.users);
       for(let user of this.users){
         if(user.usernm === this.selectedUser){
@@ -62,15 +73,15 @@ export class ReportIssueComponent implements OnInit{
     })
     //getTags
     this.reportservice.getTags().subscribe(data=>{
-      this.tags = data;
+      this.tags = data.filter((e:any)=>e.status_id===1);
     })
     //getstatus
     this.reportservice.getStatus().subscribe(data=>{
-      this.status = data;
+      this.status = data.filter((e:any)=>e.status_id===1);
     })
     //getPriority
     this.reportservice.getPriorities().subscribe(data=>{
-      this.priority = data;
+      this.priority = data.filter((e:any)=>e.status_id===1);
     })
   }
   
@@ -80,10 +91,13 @@ export class ReportIssueComponent implements OnInit{
     issueForm.append('tag',this.selectedTag || '');
     issueForm.append('status',this.selectedStatus || '');
     issueForm.append('priority',this.selectedPriority || '');
-    issueForm.append('assigned_to',this.selectedUser || '');
+    issueForm.append('assigned_to',this.assignedTo || '');
     issueForm.append('title',this.title || '');
     issueForm.append('description',this.description || '');
-    issueForm.append('file',this.selectedFile || '');
+    this.selectedFile.forEach(file => {
+      issueForm.append('files', file);
+    });    
+    issueForm.append('reported_by',this.selectedUser || '');
     this.reportservice.addIssue(issueForm).subscribe(()=>{});
     alert("Issue added successfully!");
   }

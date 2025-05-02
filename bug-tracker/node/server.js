@@ -8,6 +8,7 @@ const bcrypt = require('bcrypt');
 const app = express();
 app.use(cors({ origin: 'http://localhost:4200' }));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 const storage = multer.memoryStorage();
 const upload = multer({storage});
@@ -60,7 +61,7 @@ app.post("/login",async(req,res)=>{
     try{
         const {user,password} = req.body;
 
-        const query = await pool.query(`select * from users where usernm=$1`,[user]);
+        const query = await pool.query(`select * from users where usernm=$1 AND status_id=1`,[user]);
 
         if(!(query.rowCount>0)){
             return res.status(401).json({message:"Invalid username or password"});
@@ -179,24 +180,47 @@ app.post('/add-priority',async (req,res)=>{
 });
 
 //*add issue
-app.post('/add-issue',upload.single('file'),async(req,res)=>{
-    try{
-        const file = req.file;
-        if(!file){
-            console.log()
-        }
-        const{project,tag,status,priority,assigned_to,title,description} = req.body;
-        const insert = await pool.query(`insert into issues(project,tag,status,priority,assigned_to,title,description,file_name,file_type,file_content) 
-            values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`,
-            [project,tag,status,priority,assigned_to,title,description,file.originalname,file.mimetype,file.buffer]
+app.post('/add-issue', upload.array('files'), async (req, res) => {
+    try {
+      const files = req.files;
+      const { project, tag, status, priority, assigned_to, title, description, reported_by } = req.body;
+  
+      const result = await pool.query(
+        `INSERT INTO issues(project, tag, status, priority, assigned_to, title, description, reported_by)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING issue_no`,
+        [project, tag, status, priority, assigned_to, title, description, reported_by]
+      );
+  
+      const issueId = result.rows[0].issue_no;
+  
+      for (const file of files) {
+        await pool.query(
+          `INSERT INTO issue_attachments(issue_id, file_name, file_type, file_content)
+           VALUES ($1, $2, $3, $4)`,
+          [issueId, file.originalname, file.mimetype, file.buffer]
         );
+      }
+  
+      res.status(200).json({ message: 'Issue and files uploaded successfully' });
+    } catch (err) {
+      console.error('Error:', err);
+      res.status(500).json({ message: "Couldn't add issue details to database" });
+    }
+  });
+
+app.post('/add-comment',async(req,res)=>{
+    try{
+        const {user,comment,time} = req.body;
+        const query = await pool.query("INSERT INTO comments(commented_by, comment_desc, commented_on) values($1,$2,$3) RETURNING 1",[user,comment,time]);
+        if(query.rowCount>0){
+            console.log("Inserted comment successfully");
+        }
     }
     catch(err){
-        console.error("Error: ",err);
-        return res.status(500).json({message:"Couldnt add issue details to database"});
+        console.log("Error: ",err);
+        return res.status(500).send({message:"Error"+err});
     }
 })
-
 /*
 *This section of code contains the API endpoints for the GET requests
 */
@@ -290,14 +314,58 @@ app.get('/priorities',async(req,res)=>{
 })
 
 
-app.get("/issue-filter", async (req, res) => {
+app.get("/issue-filter", authenticateToken, async (req, res) => {
     try {
-      const { project, tag, status, priority, assigned_to } = req.query;
-  
-      let query = `SELECT * FROM issues WHERE assigned_to='${assigned_to}' AND status_id IN (1,2)`;
+      const { project, tag, status, priority, assigned_to, startDate, endDate } = req.query;
       const values = [];
       let idx = 1;
   
+      // 🔐 Use role and username from the token
+      const roleName = req.user.role;
+      const username = req.user.username;
+  
+      // Get the group ID from access_level
+      const groupIdResult = await pool.query(
+        "SELECT id FROM access_level WHERE access_name = $1",
+        [roleName]
+      );
+      const groupId = groupIdResult.rows[0]?.id;
+  
+      // Check project view permission (perms_id = 2)
+      const permissionResult = await pool.query(
+        "SELECT 1 FROM group_perms WHERE group_id = $1 AND perms_id = 2",
+        [groupId]
+      );
+      const canViewAll = permissionResult.rows.length > 0;
+  
+      // Build the base query
+      let query = `
+      SELECT 
+        i.issue_no, 
+        i.project, 
+        i.tag, 
+        i.status, 
+        i.priority, 
+        i.assigned_to,
+        i.reported_by,
+        i.title, 
+        i.description, 
+        TO_CHAR(i.reported_on, 'YYYY-MM-DD HH24:MI:SS') AS formatted_reported_on,
+        ia.id,
+        ia.file_name,
+        ia.file_type,
+        ia.file_content
+      FROM issues i
+      LEFT JOIN issue_attachments ia ON i.issue_no = ia.issue_id
+      WHERE i.status_id IN (1, 2)
+    `;
+  
+      if (!canViewAll) {
+        query += ` AND assigned_to = $${idx++}`;
+        values.push(username);
+      }
+  
+      // Apply filters
       if (project) {
         query += ` AND project = $${idx++}`;
         values.push(project);
@@ -315,37 +383,121 @@ app.get("/issue-filter", async (req, res) => {
         values.push(priority);
       }
   
-      const result = await pool.query(query+` ORDER BY issue_no`, values);
+      if (assigned_to && canViewAll) {
+        query += ` AND assigned_to = $${idx++}`;
+        values.push(assigned_to);
+      }
+  
+      if (startDate) {
+        query += ` AND reported_on >= $${idx++}`;
+        values.push(startDate);
+      }
+      if (endDate) {
+        query += ` AND reported_on <= $${idx++}`;
+        values.push(endDate);
+      }
+  
+      query += ` ORDER BY issue_no`;
+  
+      const result = await pool.query(query, values);
       res.json(result.rows);
-      console.log("Successfully fetched filtered data!");
+      console.log("Filtered data fetched successfully!");
     } catch (err) {
-      console.error("Error getting data from table:", err);
+      console.error("Error filtering issues:", err);
       res.status(500).send("Internal Server Error");
     }
-  });
+});
 
-app.get('/download-file/:id',async(req,res)=>{
+app.get("/comments",async(req,res)=>{
     try{
-        const {id} = req.params;
-        const query = "select file_name,file_type,file_content from issues where issue_no=$1";
-        const result = await pool.query(query,[id]);
-
-        
-    if (result.rows.length === 0) {
-        return res.status(404).send("File not found");
+        const comments = await pool.query("SELECT * FROM comments");
+        res.json(comments.rows);
     }
-  
-      const file = result.rows[0];
-  
-      res.setHeader("Content-Disposition", `inline`);
-      res.setHeader("Content-Type", file.file_type);
-      res.send(file.file_content);
-    } 
-    catch (err) {
-      console.error("Download error:", err);
-      res.status(500).send("Download failed");
+    catch(err){
+        console.error("Error getting data from table: ",err);
+        return res.status(500).json({message:"Error while trying to get comments from Database"})
     }
 })
+
+app.get('/download-file/:issueId/:attachmentId', (req, res) => {
+    const { issueId, attachmentId } = req.params;
+  
+    const query = `
+      SELECT file_name, file_type, file_content
+      FROM issue_attachments
+      WHERE issue_id = $1 AND id = $2
+    `;
+    
+    pool.query(query, [issueId, attachmentId], (err, result) => {
+      if (err) {
+        return res.status(500).send('Error fetching file');
+      }
+  
+      const attachment = result.rows[0];
+      if (!attachment) {
+        return res.status(404).send('Attachment not found');
+      }
+  
+      res.setHeader('Content-Type', attachment.file_type);
+      res.setHeader('Content-Disposition', `attachment; filename=${attachment.file_name}`);
+      
+      res.send(attachment.file_content);
+    });
+});
+
+app.get('/view-file/:issueId/:attachmentId', (req, res) => {
+    const { issueId, attachmentId } = req.params;
+  
+    // Parse the issueId and attachmentId as integers
+    const parsedIssueId = parseInt(issueId, 10);
+    const parsedAttachmentId = parseInt(attachmentId, 10);
+  
+    // Validate that the parsed values are valid integers
+    if (isNaN(parsedIssueId) || isNaN(parsedAttachmentId)) {
+      return res.status(400).send('Invalid issueId or attachmentId');
+    }
+  
+    const query = `
+      SELECT file_name, file_type, file_content
+      FROM issue_attachments
+      WHERE issue_id = $1 AND id = $2
+    `;
+  
+    pool.query(query, [parsedIssueId, parsedAttachmentId], (err, result) => {
+      if (err) {
+        console.error('DB Error:', err);
+        return res.status(500).send('Error fetching file');
+      }
+  
+      const attachment = result.rows[0];
+      console.log("Attatchment details: ",attachment);
+      if (!attachment) {
+        return res.status(404).send('Attachment not found');
+      }
+  
+      // Check if file_content exists before proceeding
+      if (!attachment.file_content) {
+        return res.status(500).send('File content is empty or missing');
+      }
+
+      // Convert file_content to Base64 string
+      const buffer = Buffer.from(attachment.file_content, 'binary');
+      // Set appropriate Content-Type based on file_type
+      if (attachment.file_type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      } else if (attachment.file_type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+      } else {
+        res.setHeader('Content-Type', attachment.file_type || 'application/octet-stream');
+      }
+  
+      res.setHeader('Content-Disposition', `inline; filename="${attachment.file_name}"`);
+      res.end(buffer);
+    });
+});
+
+    
+  
 
 /*
 *----This section of code contains the API endpoints for the user to delete(setting status=3) entries from database------
@@ -531,21 +683,40 @@ app.put("/priority/:id",async(req,res)=>{
     }
 })
 
-app.put("/issues/:issue_no",async(req,res)=>{
-    try{
+app.put("/issues/:issue_no", upload.single('file'), async (req, res) => {
+    try {
         const issue_no = req.params.issue_no;
         const file = req.file;
-        const {project,tag,status,priority,assigned_to,title,description}=req.body;
-        const update = await pool.query("update table issues set project=$1,tag=$2,status=$3,priority=$4,assigned_to=$5,title=$6,description=$7,file_name=$8,file_type=$9,file_content=$10 where issue_no=$11",[project,tag,status,priority,assigned_to,title,description,file.originalname,file.mimetype,file.buffer]);
-        res.json(update.rows);
+        const { project, tag, status, priority, assigned_to, title, description } = req.body;
 
-    }
-    catch(err){
+        // Log the data to check if it's being parsed correctly
+        console.log("Body Data:", req.body);
+        console.log("File Data:", file);
+
+        if (!req.body) {
+            return res.status(400).json({ message: "Missing data in request body" });
+        }
+
+        const updateIssue = await pool.query(
+            "UPDATE issues SET project=$1, tag=$2, status=$3, priority=$4, assigned_to=$5, title=$6, description=$7 WHERE issue_no=$8",
+            [project, tag, status, priority, assigned_to, title, description, issue_no]
+        );
+
+        if (file) {
+            const insertAttachment = await pool.query(
+                "INSERT INTO issue_attachments(issue_id, file_name, file_type, file_content) VALUES ($1, $2, $3, $4)",
+                [issue_no, file.originalname, file.mimetype, file.buffer]
+            );
+        }
+
+        res.json({ message: "Issue updated successfully" });
+    } catch (err) {
         console.error(err);
-        return res.status(500).json({message:err});
+        return res.status(500).json({ message: err.message });
     }
-})
-
+});
+1
+  
 /*
 *This section contains API Endpoints for enabling or disabling users,projects,etc.(all kinds of records)
 */

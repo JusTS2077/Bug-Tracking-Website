@@ -141,6 +141,7 @@ header span{
 .forms input:not(input[type="checkbox"]),select{
     border:0;
     width:80%;
+    height:20px;
     border: 1px solid #cccccc82;
 }
 
@@ -155,6 +156,7 @@ header span{
 
 .forms label{
     width:150px;
+    font-size: small;
 }
 
 .forms .formbuttons{
