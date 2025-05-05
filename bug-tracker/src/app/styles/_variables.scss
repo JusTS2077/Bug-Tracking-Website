@@ -1,18 +1,18 @@
-$primary:#022F40;
-$accent:#38AECC;
+$primary:#3F7CAC;
+$accent:#d7f4ff;
 // $secondary:#212D40;
 // $table_head:#247BA0;
 // $table_prim:white;
 // $table_sec:#6290C3;
-$hover:#38AECC;
+$hover:$accent;
 $shadows:#E6E8E6;
 $fontclr_light:white;
 $fontclr_dark:black;
 
 
 // Temporary colors
-$secondary:#022F40;
-$table_head:#022F40;
+$secondary:$primary;
+$table_head:$primary;
 $table_prim:white;
-$table_sec:#38AECC;
+$table_sec:$accent;
 

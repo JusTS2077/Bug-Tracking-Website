@@ -1,1 +1,25 @@
 @use 'variables' as v;
+
+@media (max-width: 430px){
+    .forms{
+        margin-left:-100px;
+        span{
+            margin-top:20px;
+        }
+
+        input{
+            max-width: 150px;
+        }
+        .custom-select{
+            margin-top:20px;
+        }
+        .formbuttons{
+            display:flex;
+            flex-direction: row;
+            position: sticky;
+            top:30.9vw;
+            left:32.1vw;
+            height:max-content;
+        }
+    }       
+}

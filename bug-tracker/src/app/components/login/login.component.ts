@@ -28,7 +28,6 @@ export class LoginComponent {
   
         try {
           this.decodedToken = jwtDecode(this.token);
-          console.log("Decoded Token:", this.decodedToken);
         } catch (err) {
           console.error("Failed to decode token:", err);
           this.authservice.logout();

@@ -78,7 +78,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let issue of issues">
+            <tr *ngFor="let issue of issues" [class.disabled]="issue.status_id==2">
                 <td>{{issue.issue_no}}</td>
                 <td>{{issue.project}}</td>
 
@@ -95,7 +95,7 @@
                       </div>
                     </ng-container>
                   </td>                
-                  <td></td>
+                  <td><button (click)="toggleStatus(issue.issue_no)">Toggle</button></td>
                 <td><button (click)="showForm=true;selectedIssue=issue"><img src="https://img.icons8.com/?size=100&id=1755&format=png&color=000000"></button></td>
                 <td><button (click)="commentFunc(issue.issue_no)"><img src="https://img.icons8.com/?size=100&id=143&format=png&color=000000"></button></td>
             </tr>
@@ -125,27 +125,37 @@
     <span>
         <label>Assigned To: </label>
         <label *ngIf="!showEdit">{{selectedIssue.assigned_to}}</label>
-        <input *ngIf="showEdit" [(ngModel)]="selectedIssue.assigned_to">
+        <select *ngIf="showEdit" [(ngModel)]="selectedIssue.assigned_to">
+          <option *ngFor="let issue of issues">{{issue.assigned_to}}</option>
+        </select>
     </span>
     <span>
       <label for="tagname">Project Name: </label>
       <label *ngIf="!showEdit">{{selectedIssue.project}}</label>
-      <input *ngIf="showEdit" [(ngModel)]="selectedIssue.project">
+      <select *ngIf="showEdit" [(ngModel)]="selectedIssue.project">
+        <option *ngFor="let issue of issues">{{issue.project}}</option>
+      </select>
     </span>
     <span>
       <label>Tag: </label>
       <label *ngIf="!showEdit">{{selectedIssue.tag}}</label>
-      <input *ngIf="showEdit" [(ngModel)]="selectedIssue.tag">
+      <select *ngIf="showEdit" [(ngModel)]="selectedIssue.tag">
+        <option *ngFor="let issue of issues">{{issue.tag}}</option>
+      </select>
     </span>
     <span>
       <label>Status:</label>
       <label *ngIf="!showEdit">{{selectedIssue.status}}</label>
-      <input *ngIf="showEdit" [(ngModel)]="selectedIssue.status ">
+      <select *ngIf="showEdit" [(ngModel)]="selectedIssue.status ">
+        <option *ngFor="let issue of issues">{{issue.status}}</option>
+      </select>
     </span>
     <span>
       <label>Priority:</label>
       <label *ngIf="!showEdit">{{selectedIssue.priority}}</label>
-      <input *ngIf="showEdit" [(ngModel)]="selectedIssue.priority">
+      <select *ngIf="showEdit" [(ngModel)]="selectedIssue.priority">
+        <option *ngFor="let issue of issues">{{issue.priority}}</option>
+      </select>
     </span>
     <span>
       <label>Title:</label>
@@ -158,9 +168,9 @@
       <input *ngIf="showEdit" [(ngModel)]="selectedIssue.description ">
     </span>
 
-    <span>
+    <span *ngIf="showEdit">
         <label for="fileInput">File (Optional): </label>
-        <input type="file" (change)="onFileSelected($event)" *ngIf="showEdit">
+        <input type="file" (change)="onFileSelected($event)">
       </span>
     
     <!-- Display multiple attachments -->

@@ -40,4 +40,8 @@ export class ViewIssuesService{
     getComments(id:number){
       return this.http.get(`http://localhost:5000/comments/${id}`);
     }
+
+    toggleStatus(id:number){
+      return this.http.put(`http://localhost:5000/issues/${id}/toggle-issue`,{});
+    }
 }

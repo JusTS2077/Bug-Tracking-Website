@@ -349,7 +349,8 @@ app.get("/issue-filter", authenticateToken, async (req, res) => {
         i.assigned_to,
         i.reported_by,
         i.title, 
-        i.description, 
+        i.description,
+        i.status_id,
         TO_CHAR(i.reported_on, 'YYYY-MM-DD HH24:MI:SS') AS formatted_reported_on,
         ia.id,
         ia.file_name,
@@ -824,6 +825,25 @@ app.put("/priorities/:id/toggle-status",async(req,res)=>{
     }
 })
 
+app.put("/issues/:id/toggle-issue",async(req,res)=>{
+    try {
+        const id = req.params.id;
+        const result = await pool.query("SELECT status_id FROM issues WHERE issue_no = $1", [id]);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: "Issue not found" });
+        }
+
+        const currentStatus = result.rows[0].status_id;
+        const newStatus = currentStatus === 2 ? 1 : 2;
+
+        const updateResult = await pool.query("UPDATE issues SET status_id = $1 WHERE issue_no = $2 RETURNING *", [newStatus, id]);
+        res.json(updateResult.rows[0]);
+    } catch (err) {
+        console.error("Error while toggling status: ", err);
+        return res.status(500).json({ message: "Error while toggling status in Database" });
+    }
+})
 
 
 /*This is to start the server*/

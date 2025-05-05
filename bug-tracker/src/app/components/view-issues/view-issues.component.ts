@@ -62,7 +62,6 @@ export class ViewIssuesComponent implements OnInit {
   ngOnInit(): void {
     this.token = this.authservice.getToken();
     this.decodedToken = jwtDecode(this.token);
-    this.assignedto_filter = this.decodedToken.user;
     this.filterby();
   }
 
@@ -103,6 +102,7 @@ export class ViewIssuesComponent implements OnInit {
       this.viewservice.getIssues(filter).subscribe(
         (data) => {
           this.issues = this.groupIssuesWithAttachments(data);
+          console.log(this.issues);
           this.isLoading = false;
         },
         (error) => {
@@ -233,6 +233,11 @@ export class ViewIssuesComponent implements OnInit {
     this.viewservice.getComments(this.commentId).subscribe((data:any)=>{
       this.commentlist = data;
       console.log(data);
+    })
+  }
+  toggleStatus(id:number){
+    this.viewservice.toggleStatus(id).subscribe(()=>{
+      this.ngOnInit();
     })
   }
 }

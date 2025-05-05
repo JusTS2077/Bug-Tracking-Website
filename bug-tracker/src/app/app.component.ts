@@ -22,8 +22,7 @@ export class AppComponent implements OnInit{
   userclick=false;
 
   constructor(public router:Router,private auth:AuthService,private cdr:ChangeDetectorRef){
-    this.decodedToken = this.auth.getDecodedToken();
-    console.log("Decoded token: ",this.decodedToken);
+
     this.router.events.subscribe(event =>{
       if(event instanceof NavigationEnd){
         this.isLoginPage = this.router.url === "/login";
@@ -33,10 +32,11 @@ export class AppComponent implements OnInit{
 
   }
   ngOnInit(): void {
-    if(this.auth.getToken()){
-      console.log("nice");
-    }
-    else{
+    this.auth.decodedToken$.subscribe(token => {
+      this.decodedToken = token;
+      console.log("Decoded Token Updated:", token);
+    });
+    if(!this.auth.getToken()){
       this.router.navigate(['/login'])
     }
   }
@@ -56,5 +56,11 @@ export class AppComponent implements OnInit{
     window.location.reload();
   }
 
+
+  sidebarOpen = false;
+
+  toggleSidebar() {
+    this.sidebarOpen = !this.sidebarOpen;
+  }
 }
 
