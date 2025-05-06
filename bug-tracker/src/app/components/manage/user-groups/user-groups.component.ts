@@ -27,12 +27,18 @@ export class UserGroupsComponent implements OnInit{
   count = 0;
 
   ngOnInit(): void {
-    this.usergrp.getPerms().subscribe(data => {
-      this.perms = data;
-    });
-
-    this.usergrp.getGroup().subscribe(data => {
-      this.grouplist = data;
+    this.usergrp.getPerms().subscribe(permsData => {
+      this.perms = permsData;
+  
+      this.usergrp.getGroup().subscribe(groups => {
+        this.grouplist = groups;
+  
+        this.grouplist.forEach((group:any) => {
+          this.usergrp.getGroupPerms(group.id).subscribe(perms => {
+            group.permissions = perms.map((p: any) => p.perms_id); // store perm IDs
+          });
+        });
+      });
     });
   }
   hasChecked(event: any, permid: number) {

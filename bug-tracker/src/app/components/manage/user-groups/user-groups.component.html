@@ -10,9 +10,23 @@
     <div class="tablecontainer">
         <table class="blueTable">
             <thead>
-
+              <tr>
+                <th>Group ID</th>
+                <th>Group Name</th>
+                <th *ngFor="let perm of perms">{{ perm.perm_name }}</th>
+              </tr>
             </thead>
-        </table>
+            <tbody>
+              <tr *ngFor="let group of grouplist">
+                <td>{{ group.id }}</td>
+                <td>{{ group.access_name }}</td>
+                <td *ngFor="let perm of perms">
+                  <span *ngIf="group.permissions?.includes(perm.id)">✅</span>
+                  <span *ngIf="!group.permissions?.includes(perm.id)">❌</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
     </div>
     <div class="forms" *ngIf="showForm==='form1'" (keydown.escape)="closeForm()" tabindex="0">
         <header>Add Usergroup</header>
