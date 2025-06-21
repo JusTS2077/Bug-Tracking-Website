@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/a217ba9c-9a6d-470e-9df5-653a2d1e3a2c)# BugTracker – Full Stack Bug Tracking Web App
+# BugTracker – Full Stack Bug Tracking Web App
 
 A custom-built bug and issue tracking system developed during my internship at [Company Name], designed to replace the company’s existing paid tool (MantisBT) with a free, secure, and scalable in-house alternative.
 
