@@ -22,7 +22,7 @@ A custom-built bug and issue tracking system developed during my internship at [
 ## Screenshots
 
 # Login Page
-The accounts are created by the admin beforehand.
+The accounts are created by the admin beforehand. Every time someone tries to log in, a JWT token is created to verify if the user account exists. If the authentication fails, the user is redirected back to the login page. A user group check is also done to see which all sections should be visible to the user.
 ![image](https://github.com/user-attachments/assets/bd26f343-eac6-4e05-83ea-cfc7ff897a39)
 
 # Report Issue Section
@@ -44,7 +44,7 @@ This section is only visible to the administrators. It is used to manage project
   ![image](https://github.com/user-attachments/assets/f671c51e-4501-4823-b968-d377ba8bd965)
   ![image](https://github.com/user-attachments/assets/4cf37e93-90e1-4be2-8d79-4658b7596c71)
   
-- User: The admin can create, edit or delete users. "Add User" opens a pop-up form where you can give the user a username, add their first name and last name, give them a password, their e-mail and their            department. You can also add them to a user group which decides the permission they will have while using the website.
+- User: The admin can create, edit or delete users. "Add User" opens a pop-up form where you can give the user a username, add their first name and last name, give them a password, their e-mail and their            department. The password is stored as hash using bcrypt which is later decrypted during login. You can also add them to a user group which decides the permission they will have while using the website.
   ![image](https://github.com/user-attachments/assets/ade99fae-a947-4522-b095-6ef311c4fd57)
   ![image](https://github.com/user-attachments/assets/fefdb2d1-9703-4bb1-93da-3dde31485271)
 
@@ -61,7 +61,4 @@ This section is only visible to the administrators. It is used to manage project
   
 -Priority(Similar to how Project section is)
  ![image](https://github.com/user-attachments/assets/61b75e44-d798-4089-a87f-ecb0583c9660)
-   
-
-
 
