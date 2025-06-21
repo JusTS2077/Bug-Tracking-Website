@@ -46,8 +46,8 @@ This section is only visible to the administrators. It is used to manage project
   
 - User: The admin can create, edit or delete users. "Add User" opens a pop-up form where you can give the user a username, add their first name and last name, give them a password, their e-mail and their            department. You can also add them to a user group which decides the permission they will have while using the website.
   ![image](https://github.com/user-attachments/assets/ade99fae-a947-4522-b095-6ef311c4fd57)
-  ![image](https://github.com/user-attachments/assets/f671c51e-4501-4823-b968-d377ba8bd965)
-  
+  ![image](https://github.com/user-attachments/assets/fefdb2d1-9703-4bb1-93da-3dde31485271)
+
 - User Groups: The admin can create, edit or delete user groups. The table shows the permissions of each group. All users registered belong to a user group that the admin will decide. "Add user group" opens up a    pop up form where you can give a name for the user group and choose the permissions for the group. "Update Permissions" allows the admin to edit the permissions of the existing user group.
   ![image](https://github.com/user-attachments/assets/373b3b40-4c7f-43b3-9f4c-0155be04c15f)
   ![image](https://github.com/user-attachments/assets/437230a0-4ed5-4e38-8360-cb9d370c9427)
