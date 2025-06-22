@@ -53,12 +53,12 @@ This section is only visible to the administrators. It is used to manage project
   ![image](https://github.com/user-attachments/assets/437230a0-4ed5-4e38-8360-cb9d370c9427)
   ![image](https://github.com/user-attachments/assets/558d01ff-5907-4428-8484-edade8815714)
   
--Tag(Similar to how Project section is)
+- Tag(Similar to how Project section is)
   ![image](https://github.com/user-attachments/assets/c9b20ba0-039d-4473-95f5-7e5e0d7536fc)
   
--Status(Similar to how Project section is)
+- Status(Similar to how Project section is)
   ![image](https://github.com/user-attachments/assets/8c468f79-2b7e-44b8-84ee-5707c8d5819d)
   
--Priority(Similar to how Project section is)
+- Priority(Similar to how Project section is)
  ![image](https://github.com/user-attachments/assets/61b75e44-d798-4089-a87f-ecb0583c9660)
 
